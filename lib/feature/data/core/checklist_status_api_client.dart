@@ -3,14 +3,14 @@ import 'package:suja_shoie_app/feature/data/model/request_data_model.dart';
 import 'api_constant.dart';
 
 class CheckListStatusClient {
-  dynamic getStatusCount(int count, String toDate, String token) async {
+  dynamic getStatusCount(int count, String toDate, String token,int orgId) async {
     ApiRequestDataModel requestData = ApiRequestDataModel(
       clientAuthToken: token,
       apiFor: "check_list_status_count",
       checklistStatus: count,
       fromDateTime:ApiConstant.fromDate,
       toDateTime: toDate,
-      
+      orgid: orgId
     );
 
      final apiConstant = ApiConstant();

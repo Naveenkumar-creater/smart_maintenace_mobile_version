@@ -9,8 +9,8 @@ class OperatorDataSourceimpl extends OperatorDataSource {
   OperatorDataSourceimpl(this.operatorClient);
 
   @override
-   Future<OperatorModel> getOperatorId(String personId, String toDate, String token) async {
-    final response =  await operatorClient.getDataPoint(personId, toDate, token);
+   Future<OperatorModel> getOperatorId(String personId, String toDate, String token, int orgId) async {
+    final response =  await operatorClient.getDataPoint(personId, toDate, token, orgId);
 
     final result = OperatorModel.fromJson(response);
 

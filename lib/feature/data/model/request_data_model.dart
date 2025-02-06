@@ -15,10 +15,12 @@ class ApiRequestDataModel {
   String? toDateTime;
   String? clientId;
   String? personId;
-  int? acrpInspectionStatus;
-  int ? timeStatus;
+  int?acrpInspectionStatus;
+  int?timeStatus;
   int ?machineStaus;
   int?datapoinPlanid;
+  int?orgid;
+  int? logpersonid;
 
   ApiRequestDataModel(
       {this.clientAuthToken,
@@ -40,10 +42,13 @@ class ApiRequestDataModel {
       this.assetbarcode,
       this.acrpInspectionStatus,
       this.inspectionstatus,
-      this.machineStaus});
+      this.machineStaus,
+      this.orgid,
+      this.logpersonid});
 
   Map<String, dynamic> toJson() {
     return {
+
       'client_aut_token': clientAuthToken,
       'api_for': apiFor,
       "asset_id": assetid,
@@ -63,7 +68,9 @@ class ApiRequestDataModel {
       'acrp_inspection_status': acrpInspectionStatus,
       'inspection_status': inspectionstatus,
       'timer_status':timeStatus,
-      "Machine_Status":machineStaus
+      "Machine_Status":machineStaus,
+      "org_id":orgid,
+      "person_id":logpersonid
     };
   }
 }

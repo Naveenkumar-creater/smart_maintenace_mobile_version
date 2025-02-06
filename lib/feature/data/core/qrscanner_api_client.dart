@@ -5,7 +5,7 @@ import '../model/request_data_model.dart';
 import 'api_constant.dart';
 
 class QrScannerClient {
-  dynamic getCheckList(String barcode, String token) async {
+  dynamic getCheckList(String barcode, String token,int orgId) async {
        DateTime now = DateTime.now();
       String toDate = DateFormat('yyyy-MM-dd').format(now);
     ApiRequestDataModel requestData = ApiRequestDataModel(
@@ -14,6 +14,7 @@ class QrScannerClient {
       assetbarcode: barcode,
       fromDateTime:toDate, 
       toDateTime: toDate,
+      orgid: orgId
       
     );
 

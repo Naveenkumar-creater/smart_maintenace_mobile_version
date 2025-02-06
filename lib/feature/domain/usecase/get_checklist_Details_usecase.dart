@@ -8,8 +8,8 @@ class GetCheckListdetailsUseCase {
   GetCheckListdetailsUseCase(this.getCheckListDetailsRepository);
 
   Future<ChecklistDetailsEntity> execute(
-      int planId, String toDate, String token, int acrpinspectionstatus) async {
+      int planId, String toDate, String token, int acrpinspectionstatus,int orgId) async {
     return getCheckListDetailsRepository.getCheckListDetails(
-       planId, toDate, token,acrpinspectionstatus);
+       planId, toDate, token,acrpinspectionstatus, orgId);
   }
 }

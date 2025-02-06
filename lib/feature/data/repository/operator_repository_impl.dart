@@ -11,10 +11,10 @@ class  OperatorRepositoryImpl
    OperatorRepositoryImpl(this.operatorDataSource);
 
   @override
-  Future<OperatorEntity> getOperatorId(String personId, String toDate, String token) async{
+  Future<OperatorEntity> getOperatorId(String personId, String toDate, String token,int orgId) async{
    OperatorModel operatorModel  =
         await operatorDataSource.getOperatorId(
-            personId, toDate, token);
+            personId, toDate, token, orgId);
     return operatorModel;
   }
 

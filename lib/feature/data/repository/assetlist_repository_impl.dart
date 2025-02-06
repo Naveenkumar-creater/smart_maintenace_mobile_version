@@ -9,9 +9,9 @@ class AssetlistRepositoryImpl implements AssetListRepository {
 
   @override
   Future<AssetListModel> getAssetList(
-      int statusCount, String toDate, String token) async {
+      int statusCount, String toDate, String token, int orgId) async {
     AssetListModel assetListModel =
-        await assetListDataSource.getAssetList(statusCount, toDate, token);
+        await assetListDataSource.getAssetList(statusCount, toDate, token, orgId);
     // ignore: avoid_print
     print("statusCount type: ${statusCount.runtimeType}");
     // ignore: avoid_print

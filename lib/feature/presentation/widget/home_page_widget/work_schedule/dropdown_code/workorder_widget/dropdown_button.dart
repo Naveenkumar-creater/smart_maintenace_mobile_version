@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:suja_shoie_app/feature/presentation/providers/orgid_provider.dart';
     
 import '../../../../../api_services/checklist_status_count_service.dart';
 import '../../../../../providers/checklist_status_count_provider.dart';
@@ -42,63 +43,40 @@ class DropdownMenuWorkOrder extends StatefulWidget {
 
 class _DropdownMenuExampleState extends State<DropdownMenuWorkOrder> {
   int selectedValueIndex = 0;
-  
+  int? isLoadingIndex; // Track which index is loading
+  List<int?> statusCounts = [null, null, null]; // Use `null` to indicate no data yet
 
-  List<String> dropdownOptions = [
-    // 'Pending',
-    'Open',
-    'In Progress',
-    'Complete',
-    // 'Overdue',
-    // 'Reject'
-  ];
-
-  List<Color> valueColors = [
-    // Colors.indigo,
-    Colors.blue,
-    Colors.orange,
-    Colors.green,
-    // Colors.red,
-    // Colors.black,
-  ];
-
-
- List<int> statusCounts = [0, 0, 0]; // Initialize counts for each status
+  List<String> dropdownOptions = ['Open', 'In Progress', 'Complete'];
+  List<Color> valueColors = [Colors.blue, Colors.orange, Colors.green];
 
   @override
   void initState() {
     super.initState();
-    // Load initial status count for the selected index
-    _loadStatusCount(selectedValueIndex);
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _loadStatusCount(selectedValueIndex);
+    });
   }
 
-void _loadStatusCount(int index) {
-  bool isLoading = true; 
-  int count = index + 1;
-
-  // if (count == 4) {
-  //   count = 100;
-  // }
-
-  ChecklistStatusService()
-      .getStatusCount(
-        context: context,
-        count: count,
-      )
-      .then((_) {
-    final checklistStatusCountProvider =
-        Provider.of<CheckListStatusCountProvider>(context, listen: false);
-
-    int loadedCount = checklistStatusCountProvider.user!.count;
-
+  void _loadStatusCount(int index) {
     setState(() {
-      statusCounts[index] = loadedCount;
-      isLoading = false; // Set isLoading to false when data is fetched
+      isLoadingIndex = index; // Set loading index
+      statusCounts[index] = null; // Clear the previous value until the new one loads
     });
-  });
-}
 
+    final orgId = Provider.of<OrgIdProvider>(context, listen: false).orgid;
+    
+    ChecklistStatusService()
+        .getStatusCount(context: context, count: index + 1, orgid: orgId ?? 0)
+        .then((_) {
+      final checklistStatusCountProvider =
+          Provider.of<CheckListStatusCountProvider>(context, listen: false);
 
+      setState(() {
+        statusCounts[index] = checklistStatusCountProvider.user!.count;
+        isLoadingIndex = null; // Reset loading index after data loads
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,14 +101,12 @@ void _loadStatusCount(int index) {
                 color: themeState.isDarkTheme ? Colors.white : Colors.black,
               ),
               dropdownColor: themeState.isDarkTheme ? const Color(0xFF424242) : Colors.white,
-                onChanged: (newValueIndex) {
-              setState(() {
-                selectedValueIndex = newValueIndex!;
-                _loadStatusCount(newValueIndex); // Load status count for the new index
-              });
-            },
-
-
+              onChanged: (newValueIndex) {
+                setState(() {
+                  selectedValueIndex = newValueIndex!;
+                  _loadStatusCount(newValueIndex);
+                });
+              },
               items: List.generate(
                 dropdownOptions.length,
                 (index) => DropdownMenuItem<int>(
@@ -138,7 +114,6 @@ void _loadStatusCount(int index) {
                   child: Row(
                     children: [
                       Text(dropdownOptions[index]),
-                      const Spacer(),
                     ],
                   ),
                 ),
@@ -149,16 +124,22 @@ void _loadStatusCount(int index) {
             onTap: () {
               _showBottomSheet(context);
             },
-            child: RichText(
-              text: TextSpan(
-                text: '${statusCounts[selectedValueIndex]}',
-                style: TextStyle(
-                  fontSize: 43,
-                  color: valueColors[selectedValueIndex],
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-            ),
+            child: isLoadingIndex == selectedValueIndex || statusCounts[selectedValueIndex] == null
+                ? const SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : RichText(
+                    text: TextSpan(
+                      text: '${statusCounts[selectedValueIndex]}',
+                      style: TextStyle(
+                        fontSize: 43,
+                        color: valueColors[selectedValueIndex],
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ),
           ),
         ],
       ),
@@ -176,8 +157,8 @@ void _loadStatusCount(int index) {
       },
     );
   }
-
 }
+
 
 
 

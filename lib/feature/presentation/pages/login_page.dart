@@ -11,7 +11,7 @@ class Loginpage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration:  BoxDecoration(
             image: DecorationImage(
                 image: AssetImage('assets/images/sujashoei.jpeg'),fit: BoxFit.cover)),
         child: Column(

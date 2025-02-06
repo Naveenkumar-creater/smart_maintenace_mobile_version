@@ -11,9 +11,9 @@ class CheckListDataSourceimpl extends CheckListDataSource {
 
   @override
   Future<CheckListModel> getCheckList(
-      int id, String toDate, String token) async {
+      int id, String toDate, String token,int orgId) async {
   try{  final response =
-        await checkListClient.getCheckList(id, toDate, token);
+        await checkListClient.getCheckList(id, toDate, token,orgId);
 
         if(response!=null){
           // ignore: avoid_print

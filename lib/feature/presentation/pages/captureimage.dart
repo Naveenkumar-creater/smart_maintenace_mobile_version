@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
@@ -151,7 +152,185 @@ class _ImageCaptureState extends State<CaptureImage> {
         .user
         ?.responseData;
     final qrasset = qrresponse?.checklist ?? [];
-    return WillPopScope(
+
+    final size=MediaQuery.of(context).size.width < 600;
+    return
+    size? 
+     WillPopScope(
+    onWillPop: () async {
+        return false;
+      
+    },
+      child: Scaffold(
+        body: Center(
+          child: Container(
+       
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+
+                Stack(
+                  children: [
+                    Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: SizedBox(
+                            width: 400,
+                            height: 300,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _capturedImages.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Stack(
+                                  alignment: Alignment.topRight,
+                                  children: [
+                                    Center(child: Container(
+                                        width: 350,
+                            height: 400,
+                                      child: Image.file(_capturedImages[index]!))),
+                                    if (_cancelIconVisible)
+                                      GestureDetector(
+                                        onTap: () => _deleteImage(index),
+                                        child: Container(
+                             
+                                          decoration: const 
+                                          BoxDecoration(
+                                            shape:BoxShape.circle,
+                                            color: Colors.white,
+
+                                          ),
+                                          child:  Icon(
+                                            Icons.cancel,
+                                            color: Colors.red,
+                                            size: 30.sp,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: _imageCaptured ? null : captureAndResizeImage,
+                          child: Container(
+                            height: 60,
+                            width: 60,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              color:
+                                  _imageCaptured ? Colors.grey : Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(
+                                      0.5), // Specify the shadow color here
+                                  spreadRadius: 2,
+                                  blurRadius: 2,
+                                  offset: const Offset(
+                                      0, 2), // Adjust the offset if needed
+                                ),
+                              ],
+                            ),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Icon(
+                                  Icons.circle_rounded,
+                                  size: 60,
+                                  color: _imageCaptured
+                                      ? Colors.black12
+                                      : const Color.fromARGB(86, 33, 149, 243),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Capture Machine Photo along with Barcode',
+                                ),
+                                SizedBox(
+                                  width: defaultPadding / 4,
+                                ),
+                                Icon(
+                                  Icons.camera_alt,
+                                  size: 30,
+                                  color: Colors.blue,
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                if (_imageCaptured) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CheckPointDetails(
+                                        planId: widget.planId,
+                                        capturedImages: _capturedImages,
+                                        pageId: widget.pageId, acrpinspectionstatus: widget.acrpinspectionstatus, assetId: widget.assetid, assetname: widget.assetname,
+                                        
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor:
+                                    _imageCaptured ? Colors.blue : Colors.grey,
+                              ),
+                              child: const Text("Okay"),
+                            ),
+                            const SizedBox(
+                              width: 40,
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  _navigateBack();
+                                },
+                                child: const Text("Cancel")),
+                          ],
+                        ),
+                      ],
+                    ),
+                    // Overlay the loading indicator
+                    if (_processingImage)
+                      Container(
+                        color: Colors.black.withOpacity(0.5),
+                        child: Center(
+                          child: LottieLoadingAnimation(),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ):
+    
+    
+    WillPopScope(
     onWillPop: () async {
         return false;
       

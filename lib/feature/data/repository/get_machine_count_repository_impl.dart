@@ -10,9 +10,9 @@ class GetMachineCountRepositoryImpl implements GetMachineCountRepository{
   GetMachineCountRepositoryImpl(this.getMachinecountDatasource);
 
 @override
-  Future<GetmachineCountModel>getMachineCount(int machineStatus,String todate, String token)async{
+  Future<GetmachineCountModel>getMachineCount(int machineStatus,String todate, String token, int orgId)async{
 
-    GetmachineCountModel response= await getMachinecountDatasource.getMachineCOunt(machineStatus, todate, token);
+    GetmachineCountModel response= await getMachinecountDatasource.getMachineCOunt(machineStatus, todate, token,orgId);
 
     return response;
 }

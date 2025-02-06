@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:suja_shoie_app/feature/presentation/pages/login_page.dart';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:suja_shoie_app/feature/presentation/providers/additional_datapoint_provider.dart';
 import 'package:suja_shoie_app/feature/presentation/providers/asset_list_provider.dart';
 import 'package:suja_shoie_app/feature/presentation/providers/bottom_tap_provider.dart';
@@ -13,11 +14,14 @@ import 'package:suja_shoie_app/feature/presentation/providers/operator_provider.
 import 'package:suja_shoie_app/feature/presentation/providers/theme_providers.dart';
 import 'package:suja_shoie_app/constant/utils/theme_styles.dart';
 import 'feature/data/core/api_constant.dart';
+import 'feature/presentation/pages/responsive_login_page.dart';
 import 'feature/presentation/providers/checklist_provider.dart';
 import 'feature/presentation/providers/datapoint_provider.dart';
 import 'feature/presentation/providers/get_machine_count_provider.dart';
 import 'feature/presentation/providers/initiate_pause_provider.dart';
+import 'feature/presentation/providers/location_provider.dart';
 import 'feature/presentation/providers/notification_provider.dart';
+import 'feature/presentation/providers/orgid_provider.dart';
 import 'feature/presentation/providers/overdue_notification_provider.dart';
 import 'feature/presentation/providers/qrscanner_provider.dart';
 import 'feature/presentation/providers/sm_datapoint_provider.dart';
@@ -39,20 +43,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-  //     final screenWidth= MediaQuery.of(context as BuildContext).size.width;
+      final screenWidth= MediaQuery.of(context).size.width;
 
-  //     SystemChrome.setPreferredOrientations(
-  // screenWidth < 576
-  //         ? [
-  //             DeviceOrientation.portraitUp,
-  //             DeviceOrientation.portraitDown,
-  //           ]
-  //         : [
-  //             DeviceOrientation.landscapeLeft,
-  //             DeviceOrientation.landscapeRight,
-  //           ],
+      SystemChrome.setPreferredOrientations(
+  screenWidth < 600
+          ? [
+              DeviceOrientation.portraitUp,
+              DeviceOrientation.portraitDown,
+            ]
+          : [
+              DeviceOrientation.landscapeLeft,
+              DeviceOrientation.landscapeRight,
+            ],
   
-  // );
+  );
     return MultiProvider(
       
         providers: [
@@ -104,19 +108,23 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<AssetListProvider>(
             create: (_) => AssetListProvider(),
           ),
+          ChangeNotifierProvider<LocationProvider>(create: (_)=>LocationProvider()),
+          ChangeNotifierProvider<OrgIdProvider>(create: (_)=>OrgIdProvider())
         ],
-        child: Consumer<ThemeProvider>(
-          builder: (context, themeProvider, child) {
-            return MaterialApp(
-              title: "Suja_Shoei",
-              theme: themeData(context, themeProvider.isDarkTheme),
-              debugShowCheckedModeBanner: false,
-              // ignore: prefer_const_constructors
-              home: Scaffold(
-                body: Loginpage()
-              ),
-            );
-          },
+        child: ScreenUtilInit(
+          designSize: MediaQuery.of(context).size.width<600 ? Size(360,760) :Size(1024,800) ,
+          child: Consumer<ThemeProvider>(
+            builder: (context, themeProvider, child) {
+              return MaterialApp(
+                title: "Suja_Shoei",
+                theme: themeData(context, themeProvider.isDarkTheme),
+                debugShowCheckedModeBanner: false,
+                // ignore: prefer_const_constructors
+                home:  ResponsiveLoginPage()
+               
+              );
+            },
+          ),
         ));
   }
 }

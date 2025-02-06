@@ -9,9 +9,9 @@ class QrScannerRepositoryImpl implements QrScannerRepository {
 
   @override
   Future<CheckListModel> getCheckList(
-       String barcode, String token) async {
+       String barcode, String token, int orgId) async {
     CheckListModel checkListModel =
-        await qrScannerDataSource.getCheckList( barcode, token);
+        await qrScannerDataSource.getCheckList( barcode, token, orgId);
  
     return checkListModel;
   }

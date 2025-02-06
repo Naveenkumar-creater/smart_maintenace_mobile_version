@@ -9,6 +9,7 @@ class ChecklistRequest {
   final int acrhAcmphId;
   final int acrhid;
   final int planid;
+  final int orgid;
   final List<String> headerimage;
   final List<ChecklistCheckpoint> checkPoints;
 
@@ -24,7 +25,8 @@ class ChecklistRequest {
       required this.fromDateTime,
       required this.statusId,
       required this.acrhid,
-      required this.planid});
+      required this.planid,
+      required this.orgid});
 
   Map<String, dynamic> toJson() {
     return {
@@ -40,6 +42,7 @@ class ChecklistRequest {
       'acrh_id': acrhid,
       'acrp_id': planid,
       'check_points': checkPoints.map((checkpoint) => checkpoint.toJson()).toList(),
+            "org_id":orgid
     };
   }
 }

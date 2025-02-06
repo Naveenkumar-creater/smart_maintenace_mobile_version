@@ -5,6 +5,8 @@ import 'package:suja_shoie_app/feature/presentation/api_services/asset_list_serv
 import 'package:suja_shoie_app/feature/presentation/providers/asset_list_provider.dart';
 import 'package:suja_shoie_app/feature/presentation/widget/home_page_widget/work_schedule/assetlist_workschedule/asset_list_workschedule.dart';
 
+import '../../../providers/orgid_provider.dart';
+
 class AssetListDataTable extends StatefulWidget {
   final int statuscount;
 
@@ -32,9 +34,11 @@ class _AssetListDataTableState extends State<AssetListDataTable> {
 
   Future<void> _fetchAssetList() async {
     try {
+      final orgId=Provider.of<OrgIdProvider>(context,listen: false).orgid;
       await _assetListService.getAssetList(
         context: context,
         count: widget.statuscount,
+        orgid: orgId ?? 0
       );
       setState(() {
         isLoading = false; // Set isLoading to false when data is fetched
@@ -50,6 +54,7 @@ class _AssetListDataTableState extends State<AssetListDataTable> {
 
   @override
   Widget build(BuildContext context) {
+    final size=MediaQuery.of(context).size.width<600;
     return Consumer<AssetListProvider>(
       builder: (context, assetListProvider, _) {
         final responseData = assetListProvider.user?.responseData;
@@ -64,7 +69,8 @@ class _AssetListDataTableState extends State<AssetListDataTable> {
                 ? const Center(
                     child: Text("No Records Found",style: TextStyle(fontSize:18 ) ),
                   )
-                : Expanded(
+                : 
+                Expanded(
                     child: ListView(
                     scrollDirection: Axis.vertical,
                     children: [
@@ -98,13 +104,7 @@ class _AssetListDataTableState extends State<AssetListDataTable> {
                             ),
                             tooltip: "represent Asset Tag ID",
                           ),
-                          DataColumn(
-                            label: Text(
-                              "Asset Location",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            tooltip: "represent Asset Location",
-                          ),
+                         
                         ],
                         rows: assetList.asMap().entries.map((entry) {
                           final index = entry.key + 1;
@@ -118,7 +118,7 @@ class _AssetListDataTableState extends State<AssetListDataTable> {
                               DataCell(Text(index.toString())),
                               DataCell(Text(asset.assetName)),
                               DataCell(Text("${asset.assetId}")),
-                              DataCell(Text(asset.locName)),
+                            
                             ],
                             onSelectChanged: (_) {
                               Navigator.push(

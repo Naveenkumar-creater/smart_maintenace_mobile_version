@@ -10,9 +10,9 @@ class QrScannerDataSourceimpl extends QrScannerDataSource {
 
   @override
   Future<CheckListModel> getCheckList(
-   String barcode, String token) async {
+   String barcode, String token, int orgId) async {
   try{  final response =
-        await qrScannerClient.getCheckList(barcode, token);
+        await qrScannerClient.getCheckList(barcode, token,orgId);
 
         if(response!=null){
           // ignore: avoid_print

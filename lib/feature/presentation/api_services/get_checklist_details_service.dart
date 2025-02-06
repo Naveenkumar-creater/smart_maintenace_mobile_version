@@ -18,7 +18,8 @@ class GetChecklistService {
  Future<void> getCheckListDetails({
     required BuildContext context,
     required int planId,
-    required int acrpinspectionstatus
+    required int acrpinspectionstatus,
+    required int orgid
   }) async {
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
@@ -39,7 +40,7 @@ class GetChecklistService {
           GetCheckListdetailsUseCase(getCheckListDetailsRepository);
 
       ChecklistDetailsEntity user =
-          await getCheckListdetailsUseCase.execute(planId, toDate, token,acrpinspectionstatus);
+          await getCheckListdetailsUseCase.execute(planId, toDate, token,acrpinspectionstatus,orgid);
 
       var checkliststatus =
           // ignore: use_build_context_synchronously

@@ -5,8 +5,10 @@ import 'package:suja_shoie_app/constant/utils/theme_styles.dart';
 
 import '../../../../api_services/checklist_service.dart';
 import '../../../../api_services/qrscanner_service.dart';
+import '../../../../mobile_page/mobile_home_page.dart';
 import '../../../../pages/main_page.dart';
 import '../../../../providers/checklist_provider.dart';
+import '../../../../providers/orgid_provider.dart';
 import '../../../../providers/theme_providers.dart';
 import 'asset_list_expended.dart';
 
@@ -39,10 +41,11 @@ Future<void> _fetchCheckList() async {
   try {
     // // Simulate a 2-second loading delay
     // await Future.delayed(const Duration(seconds: 1));
-
+final orgId=Provider.of<OrgIdProvider>(context,listen: false).orgid;
     await _checkListService.getCheckList(
       context: context,
       id: widget.assetId,
+      orgid: orgId ?? 0
     ); 
 
     setState(() {
@@ -61,7 +64,100 @@ Future<void> _fetchCheckList() async {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    return WillPopScope(
+    final size= MediaQuery.of(context).size.width< 600;
+    return size?
+    
+    
+    WillPopScope(
+      onWillPop: () async {
+        // Navigate back to MainPage and replace the current page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MobileHomePage(),
+          ),
+        );
+        return true; // Prevent default back button behavior
+      },
+      child: Scaffold(
+       appBar: AppBar(
+         automaticallyImplyLeading: true,
+                       iconTheme: const IconThemeData(
+    color: Colors.white, 
+  ),
+  toolbarHeight: 70,
+
+         title: PreferredSize(
+            preferredSize: const Size.fromHeight(20),
+            child: Consumer<CheckListProvider>(
+              builder: (context, checkListProvider, _) {
+                final responseData = checkListProvider.user?.responseData;
+                final asset = responseData?.checklist ?? [];
+                String firstChecklistItem = '';
+       
+                if (asset.isNotEmpty) {
+                  firstChecklistItem = asset[0].assetname;
+                }
+       
+                return Container(
+                  color: themeProvider.isDarkTheme
+                      ? const Color(0xFF212121)
+                      : const Color(0xFF25476A),
+       
+              
+                  child: Text(
+                    firstChecklistItem,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+       ),
+        body: Consumer<CheckListProvider>(
+          builder: (context, checkListProvider, _) {
+            final responseData = checkListProvider.user?.responseData;
+            final checklist = responseData?.checklist ?? [];
+    
+            return 
+            
+            
+            isLoading
+                ?  Center(
+                    child: LottieLoadingAnimation(),
+                  )
+                : checklist.isEmpty
+                    ? const Center(
+                        child: Text("No checklist data"),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            
+                            ChecklistWidget(
+                              checklist: checklist,
+                              assetId: widget.assetId,
+                              title: 'CheckList',
+                            ),
+                           
+                            
+               
+                          ],
+                        ),
+                      );
+          },
+        ),
+      ),
+    ):
+    
+    WillPopScope(
       onWillPop: () async {
         // Navigate back to MainPage and replace the current page
         Navigator.pushReplacement(
@@ -132,7 +228,9 @@ Future<void> _fetchCheckList() async {
             final responseData = checkListProvider.user?.responseData;
             final checklist = responseData?.checklist ?? [];
     
-            return isLoading
+            return 
+            
+            isLoading
                 ?  Center(
                     child: LottieLoadingAnimation(),
                   )
@@ -203,18 +301,18 @@ Future<void> _fetchCheckList() async {
   }
 }
 
-class OtherPage extends StatelessWidget {
-  const OtherPage({super.key});
+// class OtherPage extends StatelessWidget {
+//   const OtherPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Other Page"),
-      ),
-      body: const Center(
-        child: Text("Other Page Contents"),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text("Other Page"),
+//       ),
+//       body: const Center(
+//         child: Text("Other Page Contents"),
+//       ),
+//     );
+//   }
+// }

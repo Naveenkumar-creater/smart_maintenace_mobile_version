@@ -10,8 +10,8 @@ class DataPointUseCase {
   DataPointUseCase(this.dataPointRepository);
 
 Future<DataPointEntity> execute(
-      int acrdId,  String token,int planId) async {
+      int acrdId,  String token,int planId,int orgId) async {
     return dataPointRepository.getDataPoints(
-        acrdId, token,planId);
+        acrdId, token,planId,orgId);
   }
 }

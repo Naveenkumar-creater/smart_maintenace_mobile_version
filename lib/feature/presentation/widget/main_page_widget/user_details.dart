@@ -22,11 +22,18 @@ class _UserDetailsState extends State<UserDetails> {
     final LoginApiService authservice = LoginApiService();
     final personDetails=Provider.of<LoginProvider>(context).user;
 
+final size= MediaQuery.of(context).size.width< 600;
+
     void signOut() {
       authservice.logOutUSer(context);
     }
 
-    return Column(
+    return size?  
+
+    
+    
+    
+        Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         PopupMenuButton<String>(
@@ -39,11 +46,146 @@ class _UserDetailsState extends State<UserDetails> {
               });
             }
           },
-          child: const CircleAvatar(
-            radius: 20,
+          child: Row(
+            children: [
+                // Text("${personDetails!.loginId}", style: const TextStyle(fontSize: 12, color: Colors.white)),
+              CircleAvatar(
+                radius: 15,
+                backgroundColor: Colors.white,
+                child: Icon(
+                  size:20,
+                  Icons.person,
+                  color: Colors.grey,
+                ),
+              ),
+                
+            ],
+          ),
+         
+          elevation: 8,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          itemBuilder: (BuildContext context) {
+            return <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: 'account',
+                child: Column(
+                  children: [
+                    const Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: AssetImage(
+                              'assets/images/Suji shoie1.jpg'), // Replace with your image asset
+                          radius: 30,
+                        ),
+                        // CircleAvatar(
+                        //   radius: 14,
+                        //   backgroundColor: Colors.white,
+                        //   child: Icon(
+                        //     Icons.camera_alt,
+                        //     size: 12,
+                        //     color: Colors.grey,
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                    const SizedBox(height: 8.0),
+                   Text("${personDetails?.loginId}"),
+                    const SizedBox(height: 8.0),
+                    Container(
+                      height: 2,
+                      width: double.infinity,
+                      color: themeState.isDarkTheme
+                          ? const Color(0xFF0d0d0d)
+                          : Colors.grey.shade400,
+                    ),
+                  ],
+                ),
+              ),
+              // PopupMenuItem<String>(
+              //   child: Container(
+       
+              //     child: Center(child: Text( "${personDetails?.personFname}")),
+              //   ),
+              // ),
+              PopupMenuItem<String>(
+                value: 'Theme',
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              themeProvider
+                                  .setDarkTheme(!themeProvider.isDarkTheme);
+                            });
+                          },
+                          child: const Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                             Center(child: Text('Theme')),
+                              SizedBox(
+                                width: 8,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'signOut',
+                child: GestureDetector(
+                  onTap: () {
+                    signOut();
+                  },
+                  child: const Center(child: Text('Sign Out')),
+                ),
+              ),
+              PopupMenuItem<String>(
+                enabled: true,
+                value: 'account',
+                child: Container(
+                  alignment: Alignment.center,
+                  width: 125,
+                  height: 50,
+                ),
+              ),
+            ];
+          },
+        ),
+        const SizedBox(
+          height: 2,
+        ),
+
+      ],
+    )
+    :
+    
+    Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        PopupMenuButton<String>(
+          onSelected: (value) {
+            if (value == 'signOut') {
+              signOut();
+            } else if (value == 'Theme') {
+              setState(() {
+                themeProvider.setDarkTheme(!themeProvider.isDarkTheme);
+              });
+            }
+          },
+          child: CircleAvatar(
+            radius: MediaQuery.of(context).size.width< 600 ? 8:20,
             backgroundColor: Colors.white,
             child: Icon(
-              size: 30,
+              size:MediaQuery.of(context).size.width< 600 ? 20:30,
               Icons.person,
               color: Colors.grey,
             ),

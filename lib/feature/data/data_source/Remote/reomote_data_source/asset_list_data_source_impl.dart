@@ -9,9 +9,9 @@ class AssetListDataSourceimpl extends AssetListDataSource {
 
   @override
   Future<AssetListModel> getAssetList(
-      int statusCount, String toDate, String token) async {
+      int statusCount, String toDate, String token,int orgId) async {
   try{  final response =
-        await assetListClient.getAssetList(statusCount, toDate, token);
+        await assetListClient.getAssetList(statusCount, toDate, token,orgId);
 
         if(response!=null){
           // ignore: avoid_print

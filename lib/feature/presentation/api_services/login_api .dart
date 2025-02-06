@@ -8,10 +8,13 @@ import 'package:suja_shoie_app/feature/data/repository/login_repository_imp.dart
 import 'package:suja_shoie_app/feature/domain/entity/loginentity.dart';
 import 'package:suja_shoie_app/feature/presentation/pages/main_page.dart';
 import 'package:suja_shoie_app/feature/presentation/pages/spalsh_page.dart';
+import 'package:suja_shoie_app/feature/presentation/providers/location_provider.dart';
 import 'package:suja_shoie_app/feature/presentation/providers/loginprovider.dart';
+import 'package:suja_shoie_app/feature/presentation/providers/orgid_provider.dart';
 
 import '../../domain/repository/login_repository.dart';
 import '../../domain/usecase/login_usecase.dart';
+import 'location_service.dart';
 
 
 class LoginApiService {
@@ -22,6 +25,7 @@ class LoginApiService {
   }) async {
     try {
       LoginClient apiClient = LoginClient();
+
       LoginDataSourceimpl loginData =
           LoginDataSourceimpl(apiClient); // Use the LoginDataSourceimpl
       LoginRepository loginRepository = LoginRepositoryImpl(loginData);
@@ -34,19 +38,11 @@ class LoginApiService {
 
       SharedPreferences pref = await SharedPreferences.getInstance();
 
-      // ignore: use_build_context_synchronously
+     
       Provider.of<LoginProvider>(context, listen: false).setUser(loginUser);
 
       await pref.setString("client_token", loginUser.clientauthToken!,);
-
-      // ignore: use_build_context_synchronously
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MainPage(),
-        ),
-        (route) => false,
-      );
+     
       return loginUser;
     } catch (e) {
       ShowError.showAlert(context, e.toString());

@@ -18,6 +18,7 @@ class ChecklistStatusService {
   Future<void> getStatusCount({
     required BuildContext context,
     required int count,
+        required int orgid
   }) async {
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
@@ -38,7 +39,7 @@ class ChecklistStatusService {
           CheckListStatusCountUseCase(checklistRepository);
 
       ChecklistStatusEntity user =
-          await checkListUseCase.execute(count, toDate, token);
+          await checkListUseCase.execute(count, toDate, token, orgid);
 
       var checkliststatus =
           // ignore: use_build_context_synchronously

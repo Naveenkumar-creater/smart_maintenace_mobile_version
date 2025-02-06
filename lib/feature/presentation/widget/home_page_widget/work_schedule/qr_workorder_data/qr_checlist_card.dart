@@ -11,6 +11,7 @@ import 'package:suja_shoie_app/feature/presentation/widget/home_page_widget/work
 
 import '../../../../../../constant/utils/theme_styles.dart';
 import '../../../../pages/main_page.dart';
+import '../../../../providers/orgid_provider.dart';
 import '../../../../providers/theme_providers.dart';
 
 // ignore: duplicate_ignore
@@ -39,9 +40,11 @@ class _CheckListCardViewState extends State<QrCheklistCard> {
   Future<void> _fetchCheckList() async {
     await Future.delayed(const Duration(seconds: 1));
     try {
+      final orgId=Provider.of<OrgIdProvider>(context,listen: false).orgid;
       await _qrScannerService.getCheckList(
         context: context,
         barcode: widget.barcode,
+        orgid: orgId ?? 0
       );
       setState(() {
         isLoading = false;
@@ -72,6 +75,8 @@ class _CheckListCardViewState extends State<QrCheklistCard> {
         );
         return true; // Prevent default back button behavior
       },
+
+
 
 
       child:Scaffold(

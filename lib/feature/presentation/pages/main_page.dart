@@ -6,9 +6,14 @@ import 'package:suja_shoie_app/feature/presentation/pages/more_page.dart';
 import 'package:suja_shoie_app/feature/presentation/pages/home_page.dart';
 import 'package:suja_shoie_app/feature/presentation/widget/main_page_widget/user_details.dart';
 
+import '../api_services/location_service.dart';
 import '../providers/bottom_tap_provider.dart';
+import '../providers/location_provider.dart';
+import '../providers/loginprovider.dart';
+import '../providers/orgid_provider.dart';
 import '../providers/theme_providers.dart';
 import '../../../constant/utils/theme_styles.dart';
+import '../widget/main_page_widget/user_locations.dart';
 
 class MainPage extends StatefulWidget {
   // ignore: prefer_final_fields
@@ -26,6 +31,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+   LocationService location=LocationService();
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -64,7 +70,12 @@ class _MainPageState extends State<MainPage> {
                             color: Colors.white,
                           ),
                         ),
+                        Row(children: [
+   UserLocationDetails(),
+   SizedBox(width: 20,),
                         UserDetails(),
+                        ],)
+                     
                       ],
                     ),
                   ],

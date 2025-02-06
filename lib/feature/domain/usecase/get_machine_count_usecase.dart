@@ -6,8 +6,8 @@ final GetMachineCountRepository getMachineCountRepository;
 
   GetMachineCountUsecase(this.getMachineCountRepository);
 
-  Future<GetMachineCountEntity>execute(int machineStatus, String todate, String token){
-    return  getMachineCountRepository.getMachineCount(machineStatus, todate, token);
+  Future<GetMachineCountEntity>execute(int machineStatus, String todate, String token,int orgId){
+    return  getMachineCountRepository.getMachineCount(machineStatus, todate, token,orgId);
 
   }
 

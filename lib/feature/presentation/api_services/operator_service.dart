@@ -17,6 +17,7 @@ class OperatorService {
   Future<void> getOperatorName({
     required BuildContext context,
     required String personId,
+    required int orgid
   }) async {
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
@@ -37,7 +38,7 @@ class OperatorService {
           OperatorUseCase(operatorsRepository);
 
       OperatorEntity data =
-          await operatorUseCase.execute(personId, toDate, token);
+          await operatorUseCase.execute(personId, toDate, token,orgid);
 
       var operatorname =
           // ignore: use_build_context_synchronously

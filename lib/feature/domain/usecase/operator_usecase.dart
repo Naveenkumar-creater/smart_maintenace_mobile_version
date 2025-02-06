@@ -8,8 +8,8 @@ class OperatorUseCase {
   OperatorUseCase(this.operatorRepository);
 
 Future<OperatorEntity> execute(
-      String personId, String toDate, String token) async {
+      String personId, String toDate, String token, int orgId) async {
     return operatorRepository.getOperatorId(
-        personId, toDate, token);
+        personId, toDate, token,orgId);
   }
 }

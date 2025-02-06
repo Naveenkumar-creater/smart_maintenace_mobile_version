@@ -7,7 +7,7 @@ class AssetListUsecase {
   AssetListUsecase(this.assetListRepository);
 
   Future<AssetListEntity> execute(
-      int statusCount, String toDate, String token) async {
-    return assetListRepository.getAssetList(statusCount, toDate, token);
+      int statusCount, String toDate, String token, int orgId) async {
+    return assetListRepository.getAssetList(statusCount, toDate, token, orgId);
   }
 }

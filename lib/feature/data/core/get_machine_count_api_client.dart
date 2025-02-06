@@ -6,6 +6,7 @@ class GetMachineCountClient {
     int machineStatus,
     String todate,
     String token,
+    int orgId
   ) async {
  ApiRequestDataModel requestData = ApiRequestDataModel(
       clientAuthToken: token,
@@ -13,6 +14,7 @@ class GetMachineCountClient {
       machineStaus: machineStatus,
       fromDateTime: ApiConstant.fromDate,
       toDateTime: todate,
+      orgid: orgId
     );
     final apiConstant = ApiConstant();
 

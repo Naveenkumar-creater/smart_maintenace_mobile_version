@@ -6,7 +6,7 @@ import 'api_constant.dart';
 
 class GetCheckListDetailsClient {
   dynamic getCheckListDetails(
-      int planId, String toDate, String token, int acrpinspectionstatus) async {
+      int planId, String toDate, String token, int acrpinspectionstatus, int orgId) async {
     ApiRequestDataModel requestData = ApiRequestDataModel(
       clientAuthToken: token,
       apiFor: "get_check_list_details",
@@ -14,6 +14,7 @@ class GetCheckListDetailsClient {
       fromDateTime: ApiConstant.fromDate,
       toDateTime: toDate,
       acrpInspectionStatus: acrpinspectionstatus,
+      orgid: orgId
     );
     // final Map<String, dynamic> requestData = {
     //   "client_aut_token": token,

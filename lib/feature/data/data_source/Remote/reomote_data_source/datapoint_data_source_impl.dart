@@ -10,8 +10,8 @@ class DataPointDataSourceimpl extends DataPointDataSource {
   DataPointDataSourceimpl(this.dataPointClient);
 
   @override
-   Future<DataPointModel> getDataPoint(int acrdId, String token,int planId) async {
-    final response =  await dataPointClient.getDataPoint(acrdId,token,planId);
+   Future<DataPointModel> getDataPoint(int acrdId, String token,int planId, int orgId) async {
+    final response =  await dataPointClient.getDataPoint(acrdId,token,planId, orgId);
 
     final result = DataPointModel.fromJson(response);
 

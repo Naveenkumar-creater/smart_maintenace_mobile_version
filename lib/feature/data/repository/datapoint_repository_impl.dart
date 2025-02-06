@@ -12,10 +12,10 @@ class  DataPointRepositoryImpl
 
   @override
   Future<DataPointModel> getDataPoints(
-      int acrdId, String token,int planId) async {
+      int acrdId, String token,int planId,int orgId) async {
 DataPointModel dataPointModel  =
         await dataPointDataSource.getDataPoint(
-            acrdId, token,planId);
+            acrdId, token,planId,orgId);
             print(dataPointModel);
     return dataPointModel;
   }

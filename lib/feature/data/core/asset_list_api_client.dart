@@ -3,15 +3,16 @@ import '../model/request_data_model.dart';
 import 'api_constant.dart';
 
 class AssetListClient {
-  dynamic getAssetList(int statusCount, String toDate, String token) async {
+  dynamic getAssetList(int statusCount, String toDate, String token,int orgid) async {
  ApiRequestDataModel requestData = ApiRequestDataModel(
       clientAuthToken: token,
       apiFor: "asset_list_for_checklist",
-   checklistStatus: statusCount,
+      checklistStatus: statusCount,
       fromDateTime:ApiConstant.fromDate ,
       toDateTime: toDate,
-      
+      orgid: orgid
     );
+    
     // final Map<String, dynamic> requestData = {
     //   "client_aut_token": token,
     //   "api_for": "asset_list_for_checklist",

@@ -17,7 +17,8 @@ class DataPointService {
   Future getDatapoints({
     required BuildContext context,
     required int acrdId,
-    required int  planId
+    required int  planId,
+    required int orgid
   }) async {
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
@@ -36,7 +37,7 @@ class DataPointService {
       DataPointUseCase dataPointUseCase = DataPointUseCase(dataPointRepository);
 
       DataPointEntity user =
-          await dataPointUseCase.execute(acrdId, token,planId);
+          await dataPointUseCase.execute(acrdId, token,planId,orgid);
 
       var dataPointValue =
           // ignore: use_build_context_synchronously

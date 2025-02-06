@@ -18,6 +18,7 @@ class QrScannerService {
   Future<void> getCheckList({
     required BuildContext context,
     required String barcode,
+    required int orgid
   }) async {
     try {
       
@@ -37,7 +38,7 @@ class QrScannerService {
     QrScannerUsecase qrScannerUsecase = QrScannerUsecase ( qrScannerRepository);
 
       CheckListEntity user =
-          await qrScannerUsecase.execute(barcode, token);
+          await qrScannerUsecase.execute(barcode, token,orgid);
 
       // ignore: use_build_context_synchronously
       var qrScannerChecklist = Provider.of<QrScannerProvider>(context, listen: false);

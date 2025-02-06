@@ -8,7 +8,7 @@ class CheckListUsecase {
   CheckListUsecase(this.checkListRepository);
 
   Future<CheckListEntity> execute(
-      int id, String toDate, String token) async {
-    return checkListRepository.getCheckList(id, toDate, token);
+      int id, String toDate, String token,int orgId) async {
+    return checkListRepository.getCheckList(id, toDate, token,orgId);
   }
 }

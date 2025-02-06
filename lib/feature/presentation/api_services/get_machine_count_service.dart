@@ -16,8 +16,8 @@ import '../providers/get_machine_count_provider.dart';
 class GetmachineCountService{
 Future<void>getMachineCount({
   required BuildContext context,
- required int machineStatus
-
+ required int machineStatus,
+required int orgid
 
 })async{
   try{
@@ -33,7 +33,7 @@ Future<void>getMachineCount({
 
       GetMachineCountUsecase getMachineCountUsecase = GetMachineCountUsecase(getMachineCountRepository);
 
-      GetMachineCountEntity Count=  await getMachineCountUsecase.execute(machineStatus, toDate, token);
+      GetMachineCountEntity Count=  await getMachineCountUsecase.execute(machineStatus, toDate, token,orgid);
 
       var machineCount =Provider.of<GetMachineCountProvider>(context,listen: false);
 

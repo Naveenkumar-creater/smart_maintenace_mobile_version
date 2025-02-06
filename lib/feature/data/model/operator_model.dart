@@ -17,8 +17,6 @@ class OperatorModel extends OperatorEntity {
     empId:empId,
         
         );
-
-
         
   factory OperatorModel.fromJson(Map<String, dynamic> json) {
     final operator = json['response_data']['Operator Details'];

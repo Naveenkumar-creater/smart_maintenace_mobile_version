@@ -1,5 +1,13 @@
   import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
   import 'package:suja_shoie_app/feature/presentation/api_services/login_api%20.dart';
+
+import '../../api_services/location_service.dart';
+import '../../pages/main_page.dart';
+import '../../pages/screen_homepage_layout.dart';
+import '../../providers/location_provider.dart';
+import '../../providers/loginprovider.dart';
+import '../../providers/orgid_provider.dart';
 
   class Auth extends StatefulWidget {
     const Auth({Key? key}) : super(key: key);
@@ -15,6 +23,7 @@
     final FocusNode secondTextFieldFocus = FocusNode();
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
+     LocationService location=LocationService();
     bool _obscurePassword = true;
     bool isButttonVisible = true;
     bool isLoading = false;
@@ -25,26 +34,46 @@
       super.dispose();
     }
 
-    void logInUser() async {
-      setState(() {
-        isLoading = true;
-        isButttonVisible = false;
-      });
+void logInUser() async {
+  setState(() {
+    isLoading = true;
+    isButttonVisible = false;
+  });
 
-      try {
-        await loginScreen.login(
-          context: context,
-          loginId: emailController.text,
-          password: passwordController.text,
-        );
-      } catch (error) {
-        print('Error: $error'); // Print the error for debugging purposes
-        setState(() {
-          isLoading = false;
-          isButttonVisible = true;
-        });
-      }
+  try {
+    // Step 1: Login the user
+    await loginScreen.login(
+      context: context,
+      loginId: emailController.text.trim(),
+      password: passwordController.text.trim(),
+    );
+
+    // Step 2: Fetch and set the location
+    final locationPersonId = Provider.of<LoginProvider>(context, listen: false).user?.personid;
+    if (locationPersonId != null && locationPersonId > 0) {
+      await location.getLocation(context: context, personid: locationPersonId);
+      final org = Provider.of<LocationProvider>(context, listen: false).location;
+
+      int? orgid = org?.listOfLocation.first.orgId;
+      Provider.of<OrgIdProvider>(context, listen: false).setOrgid(orgid ?? 0);
     }
+
+    // Step 3: Navigate to the main page after successfully setting the location
+ Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ScreenHomePageLayout(),
+        ),
+        (route) => false,
+      );  } catch (error) {
+    print('Error: $error'); // Print the error for debugging purposes
+    setState(() {
+      isLoading = false;
+      isButttonVisible = true;
+    });
+  }
+}
+
 
     @override
     Widget build(BuildContext context) {
@@ -141,7 +170,7 @@
                 ),
                 obscureText: _obscurePassword, // Toggle password visibility
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
               Column(
                 children: [
                   GestureDetector(

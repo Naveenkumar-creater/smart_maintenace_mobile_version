@@ -20,9 +20,36 @@ class ScanBarcode extends StatefulWidget {
 
 class _ScanBarcodeState extends State<ScanBarcode> {
   late String _barcodeResult = '';
+
+  
   @override
   Widget build(BuildContext context) {
-    return Card(elevation: 5,
+    final size=MediaQuery.of(context).size.width < 600;
+    return 
+    size ?
+       Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+           Headings(
+      subHeading: "Scanned Camera",              ),
+
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: IconButton(onPressed: 
+      _scanQrCode
+        , icon:const  Icon(
+                    Icons.camera_alt,
+                    color: Colors.blue,
+                    size: 40,
+                  ),),
+      )
+          
+              ],
+            ):
+      
+    
+    
+    Card(elevation: 5,
     shadowColor: Colors.black,
       child: Container(
         height: 248,

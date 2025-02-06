@@ -12,9 +12,9 @@ class ChecklistRepositoryImpl implements CheckListRepository {
 
   @override
   Future<CheckListModel> getCheckList(
-      int id, String toDate, String token) async {
+      int id, String toDate, String token,int orgId) async {
     CheckListModel checkListModel =
-        await checkListDataSource.getCheckList(id, toDate, token);
+        await checkListDataSource.getCheckList(id, toDate, token,orgId);
  
     return checkListModel;
   }

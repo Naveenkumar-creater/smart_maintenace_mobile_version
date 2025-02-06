@@ -19,6 +19,7 @@ class AssetListService {
   Future<void> getAssetList({
     required BuildContext context,
     required int count,
+    required int orgid,
   }) async {
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
@@ -36,7 +37,7 @@ class AssetListService {
       AssetListUsecase checkListUseCase = AssetListUsecase(assetlistRepository);
 
       AssetListEntity user =
-          await checkListUseCase.execute(count, toDate, token);
+          await checkListUseCase.execute(count, toDate, token, orgid);
 
       var assetliststatus =
           // ignore: use_build_context_synchronously

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../../../../../constant/utils/theme_styles.dart';
+import '../../../../mobile_page/mobile_checklist_status_card.dart';
 import 'asset_staus_color.dart';
 import 'checklist_status_card.dart';
 
@@ -20,11 +21,24 @@ class ChecklistWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AssetStatusColor assetStatusColor = AssetStatusColor();
+    final Size= MediaQuery.of(context).size.width<600;
 
-    return Expanded(
+    return 
+    Expanded(
       child: Column(
         children: [
-          Padding(
+          
+     Size ? Padding(
+       padding: const EdgeInsets.only(left:25,top: 15,bottom:15),
+       child: Container(
+         alignment: Alignment.centerLeft,
+         
+         child:  Text(
+                "CheckList",
+                style:  TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+              ),
+         ),
+     ):     Padding(
             padding: const EdgeInsets.only(left: defaultPadding / 2,bottom: 30),
             child: Text(
               title,
@@ -39,7 +53,19 @@ class ChecklistWidget extends StatelessWidget {
                 final statusText = assetStatusColor.getStatusText(asset.checkliststatus, asset.inspectiondate);
                 final statusColor = assetStatusColor.getStatusColor(asset.checkliststatus, asset.inspectiondate);
 
-                return ChecklistCard(
+                return
+                Size? MobileCheckListStatusCard(
+                   statusColor: statusColor,
+                  checklistName: asset.checklistname,
+                  statusText: statusText,
+                  inspectionDate: asset.inspectiondate,
+                  checklistStatus: asset.checkliststatus,
+                  planId: asset.planid,
+                  barcode: asset.assetbarcode,
+                  assetId:  assetId,
+                  assetName: asset.assetname,
+                ):
+                 ChecklistCard(
                   statusColor: statusColor,
                   checklistName: asset.checklistname,
                   statusText: statusText,

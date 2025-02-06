@@ -10,11 +10,11 @@ class GetCheckListdetailsDataSourceimpl extends GetCheckListDetailsDataSource {
 
   @override
   Future<ChecklistDetailsModel> getCheckListDetails(
-      int planId, String toDate, String token,int acrpinspectionstatus) async {
+      int planId, String toDate, String token,int acrpinspectionstatus, int orgId) async {
 
             try {
       final response = await getCheckListDetailsClient. getCheckListDetails(
-          planId, toDate, token,acrpinspectionstatus);
+          planId, toDate, token,acrpinspectionstatus, orgId);
 
 
       if (response != null) {

@@ -4,18 +4,17 @@ class LoginModel extends loginEntity {
   const LoginModel({
     String? loginId,
     String? password,
-    String? personFname,
-    String? deptName,
-    String? personLname,
-    String? orgName,
+    int?deptId,
+     int?orgId,
     String? clientauthToken,
+    int ? personid
+
   }) : super(
           loginId: loginId,
           password: password,
-          personFname: personFname,
-          deptName: deptName,
-          personLname: personLname,
-          orgName: orgName,
+          deptId: deptId,
+          orgId:orgId,
+          personid: personid,
           clientauthToken: clientauthToken,
         );
 
@@ -25,23 +24,22 @@ class LoginModel extends loginEntity {
     return LoginModel(
       loginId: userLogin['login_id'],
       password: userLogin['login_password'],
-      personFname: userLogin['person_fname'],
-      deptName: userLogin['dept_name'],
-      personLname: userLogin['person_lname'],
-      orgName: userLogin['org_name'],
       clientauthToken: userLogin['client_aut_token'],
+      deptId:userLogin['dept_id'],
+      orgId:userLogin['org_id'],
+     personid: userLogin ["person_id"]
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'login_id': loginId,
-      'login_password': password,
-      'person_fname': personFname,
-      'dept_name': deptName,
-      'person_lname': personLname,
-      'org_name': orgName,
-      'client_aut_token': clientauthToken,
-    };
-  }
+  // Map<String, dynamic> toJson() {
+  //   return {
+  //     'login_id': loginId,
+  //     'login_password': password,
+  //     'person_fname': personFname,
+  //     'dept_name': deptName,
+  //     'org_name': orgName,
+  //     'client_aut_token': clientauthToken
+    
+  //   };
+  // }
 }

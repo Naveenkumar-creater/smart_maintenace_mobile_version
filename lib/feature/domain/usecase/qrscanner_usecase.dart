@@ -9,7 +9,7 @@ class QrScannerUsecase {
   QrScannerUsecase(this.qrScannerRepository);
 
   Future<CheckListEntity> execute(
-      String barcode, String token) async {
-    return qrScannerRepository.getCheckList(barcode, token);
+      String barcode, String token, int orgId) async {
+    return qrScannerRepository.getCheckList(barcode, token,orgId);
   }
 }

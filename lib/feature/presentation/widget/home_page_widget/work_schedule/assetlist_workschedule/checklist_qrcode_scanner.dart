@@ -25,6 +25,7 @@ class _QRCodeScannerPageState extends State<QRCodeScannerPage> {
   String scannedBarcode = "Scanning...";
   bool showScanButton = false; // Initially, hide the "Scan Barcode" button
 
+
   @override
   void initState() {
     super.initState();
@@ -67,11 +68,41 @@ class _QRCodeScannerPageState extends State<QRCodeScannerPage> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+      final size =MediaQuery.of(context).size.width< 600;
     return Scaffold(
       // appBar: AppBar(
       //   title: const Text("QR Code & Barcode Scanner"),
       // ),
-       appBar:  AppBar(
+       appBar: size  ?  AppBar(
+           automaticallyImplyLeading: true,
+                       iconTheme: const IconThemeData(
+    color: Colors.white, 
+  ),
+
+         title: Container(
+           color: themeProvider.isDarkTheme
+               ? const Color(0xFF212121)
+               : const Color(0xFF25476A),
+           padding:const EdgeInsets.symmetric(horizontal: defaultPadding),
+           child: 
+               Row(
+                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                 children: [
+                   Text(
+                     "QR Code & Barcode Scanner",
+                     style: TextStyle(
+                       fontSize: 18,
+                       fontWeight: FontWeight.bold,
+                       color: Colors.white,
+                     ),
+                   ),
+                  
+                 ],
+               ),
+         
+         ),
+       ):
+        AppBar(
            automaticallyImplyLeading: true,
                        iconTheme: const IconThemeData(
     color: Colors.white, 
@@ -85,11 +116,11 @@ class _QRCodeScannerPageState extends State<QRCodeScannerPage> {
                 : const Color(0xFF25476A),
             padding:const EdgeInsets.symmetric(horizontal: defaultPadding),
             height: 115,
-            child: const SafeArea(
+            child:  SafeArea(
               child: Center(
                 child: Column(
                   children: [
-                  SizedBox( 
+                const  SizedBox( 
                       height: 18,
                     ),
                     Row(
@@ -98,7 +129,7 @@ class _QRCodeScannerPageState extends State<QRCodeScannerPage> {
                         Text(
                           "QR Code & Barcode Scanner",
                           style: TextStyle(
-                            fontSize: 25,
+                            fontSize: size ? 18: 25,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),

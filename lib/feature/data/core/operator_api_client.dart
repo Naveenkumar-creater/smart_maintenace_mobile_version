@@ -5,13 +5,14 @@ import 'package:http/http.dart' as http;
 import 'package:suja_shoie_app/feature/data/core/api_constant.dart';
 import 'package:suja_shoie_app/feature/data/model/request_data_model.dart';
 class OperatorClient {
-  dynamic getDataPoint(String personId, String toDate, String token) async {
+  dynamic getDataPoint(String personId, String toDate, String token, int orgId) async {
     ApiRequestDataModel requestData = ApiRequestDataModel(
       clientAuthToken: token,
       apiFor: "operator_details",
      personId:personId,
       fromDateTime:ApiConstant.fromDate,
       toDateTime: toDate,
+      orgid: orgId
       
     );
 

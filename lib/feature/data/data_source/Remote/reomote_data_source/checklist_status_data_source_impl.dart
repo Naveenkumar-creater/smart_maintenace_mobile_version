@@ -9,9 +9,9 @@ class CheckListDataSourceimpl extends CheckListStatusDataSource {
 
   @override
   Future<ChecklistStatusModel> getChecklistStatusCount(
-      int count, String toDate, String token) async {
+      int count, String toDate, String token,int orgId) async {
     final response =
-        await checkListStatusClient.getStatusCount(count, toDate, token);
+        await checkListStatusClient.getStatusCount(count, toDate, token,orgId);
 
     final result = ChecklistStatusModel.fromJson(response);
     print(result);

@@ -2,12 +2,13 @@ import '../model/request_data_model.dart';
 import 'api_constant.dart';
 
 class DataPointClient {
-  dynamic getDataPoint(int acrdId, String token,int planId) async {
+  dynamic getDataPoint(int acrdId, String token,int planId, int orgId) async {
     ApiRequestDataModel requestData = ApiRequestDataModel(
       clientAuthToken: token,
       apiFor: "get_check_list_datapoints",
        acrdId: acrdId,
       datapoinPlanid: planId,
+      orgid: orgId
 
     );
 

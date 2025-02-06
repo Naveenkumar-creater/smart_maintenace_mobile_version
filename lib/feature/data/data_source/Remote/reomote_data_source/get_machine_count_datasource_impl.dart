@@ -11,10 +11,11 @@ class GetMachineCountDatasourceImpl extends GetMachineCountDatasource{
 
   
   @override
-  Future<GetmachineCountModel> getMachineCOunt(int machinStatus, String todate, String token) async{
- final response=await  getMachineCountClient.getmachinecount(machinStatus, todate, token);
+  Future<GetmachineCountModel> getMachineCOunt(int machinStatus, String todate, String token, int orgId) async{
+ final response=await  getMachineCountClient.getmachinecount(machinStatus, todate, token, orgId);
 
   final result=GetmachineCountModel.fromJson(response);
+  
   return result;
   }
 

@@ -885,6 +885,36 @@ class _CheckPointDetailsState extends State<CheckPointDetails> {
     }
   }
 
+  void showText(BuildContext context, String text) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Center(
+            child: Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(5)),
+              width: 300.w,
+              height: 250.h,
+              child: ListView(
+                children: [
+                  Text(
+                    text,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                      overflow: TextOverflow.visible,
+                    ),
+                    textAlign: TextAlign.justify,
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   void _submitPop(BuildContext context) {
     showDialog(
         context: context,
@@ -969,6 +999,335 @@ class _CheckPointDetailsState extends State<CheckPointDetails> {
           );
         });
   }
+
+
+
+Widget _buildHeaderRow(bool size) {
+  
+  return 
+    size ?   Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+   _buildHeaderText("Parameter",  80, size),
+      _buildHeaderText("Specification",  90, size),
+    ],
+  ) :
+   Row(
+    children: [
+   _buildHeaderText("Parameter",  180, size),
+      _buildHeaderText("Specification",  150, size),
+      const SizedBox(width: 60),
+      _buildHeaderText("Actual", 100, false),
+    ],
+  );
+}
+
+Widget _buildHeaderText(String text, double width, bool size) {
+  return SizedBox(
+    width: width,
+    child: Text(
+      text,
+      style: TextStyle(
+        fontSize: size ? 14 : 17,
+        color: Colors.blue,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  );
+}
+
+bool _isValueInRange(String? lowerRangeValue, String? upperRangeValue, String enteredValue) {
+  final lower = double.tryParse(lowerRangeValue ?? '0') ?? 0;
+  final upper = double.tryParse(upperRangeValue ?? '0') ?? 0;
+  final value = double.tryParse(enteredValue) ?? 0;
+  return lower <= value && value <= upper;
+}
+
+bool _isValueValid(dynamic item, String enteredValue) {
+  return enteredValue == item?.amtsValue;
+}
+
+Widget _buildDataRow(
+  dynamic item,
+  TextEditingController controller,
+  bool isValueInRange,
+  bool isValueValid,
+  List<String> dataPointValues, // Pass dataPointValues as a parameter
+  int index, // Pass index as a parameter
+  Function setState, // Pass setState as a parameter
+) {
+  final lowerRangeValue = item?.amtsLowerRangeValue;
+  final upperRangeValue = item?.amtsUpperRangeValue;
+  final setValueRange = (lowerRangeValue == '0' || lowerRangeValue?.isEmpty == true) &&
+      (upperRangeValue == '0' || upperRangeValue?.isEmpty == true) &&
+      (item?.amtsValue == '0' || item?.amtsValue?.isEmpty == true);
+
+
+
+  final borderColor = setValueRange
+      ? Colors.grey
+      : controller.text.isEmpty
+          ? Colors.grey
+          : isValueInRange || isValueValid
+              ? Colors.grey
+              : Colors.orange;
+
+  final borderDesign = OutlineInputBorder(
+    borderSide: BorderSide(color: borderColor, width: 2.0),
+  );
+
+      final size = MediaQuery.of(context).size.width < 600;
+
+  return size ?
+
+ Container(
+  padding: const EdgeInsets.symmetric(vertical:4), // Add padding for better spacing
+ 
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start, // Align content to the start
+    children: [
+      // First Row: Parameter and Range/Value
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            item?.amdpDatapointDescription ?? "",
+            maxLines: 1,
+            overflow: TextOverflow.clip,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              
+              color: Colors.blueGrey, // Professional text color
+            ),
+          ),
+          if (item?.amtsLowerRangeValue?.isNotEmpty ?? false)
+            Row(
+              children: [
+                  Text(
+            "Spec:",
+            style: TextStyle(
+              fontSize: size ? 14 : 17,
+              color: Colors.blue.shade700,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+             const SizedBox(width: 4),
+                Text(
+                  lowerRangeValue ?? "",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+                const Text(
+                  " - ",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+                Text(
+                  upperRangeValue ?? "",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+              ],
+            )
+          else
+            Row(
+              children: [
+                       Text(
+            "Spec:",
+            style: TextStyle(
+              fontSize: size ? 14 : 17,
+              color: Colors.blue.shade700,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(width: 4),
+                Text(
+                  item?.amtsValue ?? "",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
+      const SizedBox(height: 12), // Add spacing between rows
+
+      // Second Row: TextFormField for input
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextFormField(
+            controller: controller,
+            onChanged: (newValue) {
+              setState(() {
+                if (index >= 0 && index < dataPointValues.length) {
+                  dataPointValues[index] = newValue;
+                }
+              });
+            },
+            decoration: InputDecoration(
+              labelText: 'Enter value',
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 12,
+                horizontal: 16,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.grey.shade300, // Light border color
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.grey.shade300,
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.blue.shade400, // Focused border color
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              hintText: 'Enter Value',
+              hintStyle: TextStyle(
+                color: Colors.grey.shade400, // Light hint text color
+              ),
+              labelStyle: TextStyle(
+                color: controller.text.isEmpty
+                    ? Colors.grey.shade400
+                    : (isValueInRange || isValueValid)
+                        ? Colors.black
+                        : Colors.orange,
+              ),
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,4}')),
+            ],
+            validator: (value) {
+              if (value == null || value.isEmpty) return 'Required Field';
+              return null;
+            },
+          ),
+          if (!setValueRange && !controller.text.isEmpty && !(isValueInRange || isValueValid))
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.warning,
+                    color: Colors.orange,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    "Value out of Spec",
+                    style: TextStyle(
+                      color: Colors.orange,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    ],
+  ),
+)
+  :
+  
+  Column(
+    children: [
+      const SizedBox(height: defaultPadding),
+      SizedBox(
+        height: 80,
+        child: Row(
+          children: [
+            SizedBox(width: 200, child: Text(item?.amdpDatapointDescription ?? "")),
+            const SizedBox(width: 10),
+            if (item?.amtsLowerRangeValue?.isNotEmpty ?? false)
+              SizedBox(
+                width: 110,
+                child: Row(
+                  children: [
+                    Text(lowerRangeValue ?? ""),
+                    const Text("-"),
+                    Text(upperRangeValue ?? ""),
+                  ],
+                ),
+              )
+            else
+              SizedBox(width: 110, child: Text(item?.amtsValue ?? "")),
+            const SizedBox(width: 28),
+            SizedBox(
+              width: 150,
+              height: 70,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: controller,
+                      onChanged: (newValue) {
+                        setState(() {
+                          if (index >= 0 && index < dataPointValues.length) {
+                            dataPointValues[index] = newValue;
+                          }
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Enter value',
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                        contentPadding: EdgeInsets.all(defaultPadding),
+                        enabledBorder: borderDesign,
+                        border: borderDesign,
+                        focusedBorder: borderDesign,
+                        hintText: dataPointValues.isNotEmpty ? 'Enter Value' : '',
+                        labelStyle: TextStyle(
+                          color: controller.text.isEmpty
+                              ? Colors.grey
+                              : (isValueInRange || isValueValid)
+                                  ? Colors.black
+                                  : Colors.orange,
+                        ),
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,4}')),
+                      ],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Required Field';
+                        return null;
+                      },
+                    ),
+                  ),
+                  if (!setValueRange && !controller.text.isEmpty && !(isValueInRange || isValueValid))
+                    const Text("Value out of Spec", style: TextStyle(color: Colors.orange, fontSize: 12)),
+                ],
+              ),
+            ),
+            if (!setValueRange && !controller.text.isEmpty && !(isValueInRange || isValueValid))
+              const Icon(Icons.warning, color: Colors.orange),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
 
   Future<void> _showPopup(BuildContext context, int index) async {
     await _fetchDataPoints(index);
@@ -1070,39 +1429,64 @@ class _CheckPointDetailsState extends State<CheckPointDetails> {
       if (trimmedValue.isEmpty) return false;
       return double.parse(trimmedValue) != null;
     }
-final size= MediaQuery.of(context).size.width<600;
+
+    final size = MediaQuery.of(context).size.width < 600;
     // ignore: use_build_context_synchronously
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         final themeProvider = Provider.of<ThemeProvider>(context);
-        return WillPopScope(
-          onWillPop: () async {
-            return false;
-          },
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: AlertDialog(
-              backgroundColor: themeProvider.isDarkTheme
+        return     WillPopScope(
+      onWillPop: () async {
+        return false; // Prevent default back button behavior
+      },
+          child: AlertDialog(
+            backgroundColor: themeProvider.isDarkTheme
+                ? const Color(0xFF424242)
+                : Color.fromARGB(255, 255, 255, 255),
+            content: Container(
+            
+              width: size ? 550 : 550,
+              height: size ? 450 : 700,
+              color: themeProvider.isDarkTheme
                   ? const Color(0xFF424242)
                   : Color.fromARGB(255, 255, 255, 255),
-              content: Container(
-                width: size? 300: 550,
-                height: size ? 400 :700,
-                color: themeProvider.isDarkTheme
-                    ? const Color(0xFF424242)
-                    : Color.fromARGB(255, 255, 255, 255),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    children: [
-
-                      size ?     Column(
-                        children: [
-                           
-                          Row(
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    size
+                        ? 
+                        
+                        Column(
                             children: [
-                            
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ImageCapture(
+                                      capturedImages: capturedImages,
+                                      onImagesCaptured: (updatedImages) {
+                                        setState(() {
+                                          capturedImages = updatedImages;
+                                          popupData[index]?['images'] =
+                                              capturedImages ?? "";
+                                        });
+                                      },
+                                    ),
+                                  ),
+                     
+                                ],
+                              ),
+                            ],
+                          )
+                        : Row(
+                            children: [
+                              const Text('Add Images        :'),
+                              const SizedBox(
+                                width: 8,
+                              ),
                               Expanded(
                                 child: ImageCapture(
                                   capturedImages: capturedImages,
@@ -1120,714 +1504,432 @@ final size= MediaQuery.of(context).size.width<600;
                               ),
                             ],
                           ),
-                        ],
-                      ):
-
-                      Row(
-                        children: [
-                          const Text('Add Images        :'),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          Expanded(
-                            child: ImageCapture(
-                              capturedImages: capturedImages,
-                              onImagesCaptured: (updatedImages) {
-                                setState(() {
-                                  capturedImages = updatedImages;
-                                  popupData[index]?['images'] =
-                                      capturedImages ?? "";
-                                });
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: defaultPadding,
-                          ),
-                        ],
-                      ),
-
-
-size ? Column(
-                        children: [
-                       
-                          Container(
-
-                            width: double.infinity,
-                            height: 50,
-                            child: TextFormField(
-                              controller: noteController,
+                                       const SizedBox(
+                                    height: defaultPadding/2,
+                                  ),
+                    size
+                        ? Column(
+                            children: [
+                              SizedBox(
+                                width: double.infinity,
+                                height: 80,
+                                child: TextFormField(
+                                  controller: noteController,
                             
-                              onChanged: (value) {
-                                noteValue = value;
-                              },
-                              decoration: const InputDecoration(
-                                labelText: 'Enter Notes',
-                                floatingLabelBehavior:
-
-                                    FloatingLabelBehavior.never,
-                                contentPadding:
-                                    EdgeInsets.all(defaultPadding),
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.yellow,
-                                    width: 1.0,
+        
+                                  onChanged: (value) {
+                                    noteValue = value;
+                                  },
+                                  decoration: const InputDecoration(
+                         
+                                        isDense: true,
+                                    labelText: 'Enter Notes',
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.never,
+                                    contentPadding:
+                                        EdgeInsets.all(defaultPadding),
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.yellow,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    hintText: '',
+                                    labelStyle:
+                                        TextStyle(color: Colors.black),
                                   ),
+                                     maxLines: 5,
+                           minLines: 3,
+                                  validator: (value) {
+                                    if (selectedDropdownValues[index].first !=
+                                        "Passed") {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Enter the Notes';
+                                      }
+                                      //                                 if (value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+                                      //   return 'Cannot contain special symbols';
+                                      // }
+                                      if (value.startsWith(' ')) {
+                                        return 'Notes cannot start with a space';
+                                      }
+                                    }
+                                    return null; // Return null when "Passed" is selected
+                                  },
                                 ),
-                                hintText: '',
-                                labelStyle: TextStyle(color: Colors.black),
                               ),
-                              validator: (value) {
-                                if (selectedDropdownValues[index].first !=
-                                    "Passed") {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Enter the Notes';
-                                  }
-                                  //                                 if (value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-                                  //   return 'Cannot contain special symbols';
-                                  // }
-                                  if (value.startsWith(' ')) {
-                                    return 'Notes cannot start with a space';
-                                  }
-                                }
-                                return null; // Return null when "Passed" is selected
-                              },
-                            ),
-                          ),
-                        ],
-                      ):
-
-                      Row(
-                        children: [
-                          const Text('Add Notes           :'),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          Expanded(
-                            child: TextFormField(
-                              controller: noteController,
-                              onChanged: (value) {
-                                noteValue = value;
-                              },
-                              decoration: const InputDecoration(
-                                hintMaxLines: 2,
-                                labelText: 'Enter Notes',
-                                floatingLabelBehavior:
-                              
-                                    FloatingLabelBehavior.never,
-                                contentPadding:
-                                    EdgeInsets.all(defaultPadding * 3),
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.yellow,
-                                    width: 1.0,
+                            ],
+                          )
+                        : Row(
+                            children: [
+                              const Text('Add Notes           :'),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: noteController,
+                                  onChanged: (value) {
+                                    noteValue = value;
+                                  },
+                                  decoration: const InputDecoration(
+                                    hintMaxLines: 2,
+                                    labelText: 'Enter Notes',
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.never,
+                                    contentPadding:
+                                        EdgeInsets.all(defaultPadding * 3),
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.yellow,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    hintText: '',
+                                    labelStyle:
+                                        TextStyle(color: Colors.black),
                                   ),
+                                  validator: (value) {
+                                    if (selectedDropdownValues[index].first !=
+                                        "Passed") {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Enter the Notes';
+                                      }
+                                      //                                 if (value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+                                      //   return 'Cannot contain special symbols';
+                                      // }
+                                      if (value.startsWith(' ')) {
+                                        return 'Notes cannot start with a space';
+                                      }
+                                    }
+                                    return null; // Return null when "Passed" is selected
+                                  },
                                 ),
-                                hintText: '',
-                                labelStyle: TextStyle(color: Colors.black),
                               ),
-                              validator: (value) {
-                                if (selectedDropdownValues[index].first !=
-                                    "Passed") {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Enter the Notes';
-                                  }
-                                  //                                 if (value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-                                  //   return 'Cannot contain special symbols';
-                                  // }
-                                  if (value.startsWith(' ')) {
-                                    return 'Notes cannot start with a space';
-                                  }
-                                }
-                                return null; // Return null when "Passed" is selected
-                              },
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-
-
-                      const SizedBox(
-                        height: defaultPadding,
-                      ),
-                      Consumer<DataPointProvider>(
-                        builder: (context, DetailsProvider, _) {
-                          final response = DetailsProvider.user;
-                          final datapoint = response?.checklistDatapointsList;
-
-                          acrdDescription =
-                              List.generate(datapoint?.length ?? 0, (index) {
-                            return datapoint![index]
-                                    ?.amdpDatapointDescription
-                                    .toString() ??
-                                ''; // Return acrdpId as String or an empty string if datapoint[index] is null
-                          });
-
-                          acrdpValues =
-                              List.generate(datapoint?.length ?? 0, (index) {
-                            return datapoint![index]?.acrdpId.toString() ??
-                                ''; // Return acrdpId as String or an empty string if datapoint[index] is null
-                          });
-
-                          datalowerRangeValue =
-                              List.generate(datapoint?.length ?? 0, (index) {
-                            return datapoint![index]?.amtsLowerRangeValue ??
-                                ''; // Return acrdpId as String or an empty string if datapoint[index] is null
-                          });
-                          datahigherRangeValue =
-                              List.generate(datapoint?.length ?? 0, (index) {
-                            return datapoint![index]?.amtsUpperRangeValue ??
-                                ''; // Return acrdpId as String or an empty string if datapoint[index] is null
-                          });
-
-                          dataamtsValue =
-                              List.generate(datapoint?.length ?? 0, (index) {
-                            return datapoint![index]?.amtsValue ??
-                                ''; // Return acrdpId as String or an empty string if datapoint[index] is null
-                          });
-
-                          datapointControllers = List.generate(
-                            datapoint?.length ?? 0,
-                            (index) {
-                              if (index < datapoint!.length) {
-                                final initialValue =
-                                    datapoint[index].datapointValue.toString();
-                                return TextEditingController(
-                                    text: initialValue);
-                              } else {
-                                // Handle the case where dataPointValues is shorter than datapoint
-                                return TextEditingController();
-                              }
-                            },
-                          );
-
-                          // Update the TextEditingController objects with locally stored values
-                          if (userEnteredDataPoints.containsKey(index)) {
-                            final List<String> storedValues =
-                                userEnteredDataPoints[index]!;
-                            for (int i = 0; i < storedValues.length; i++) {
-                              if (i < datapointControllers.length) {
-                                // Update existing TextEditingController
-                                datapointControllers[i].text = storedValues[i];
-                              } else {
-                                // Create and add a new TextEditingController for missing values
-                                datapointControllers.add(TextEditingController(
-                                    text: storedValues[i]));
-                              }
+                    const SizedBox(
+                      height: defaultPadding,
+                    ),
+                    Consumer<DataPointProvider>(
+                      builder: (context, DetailsProvider, _) {
+                        final response = DetailsProvider.user;
+                        final datapoint = response?.checklistDatapointsList;
+        
+                        acrdDescription =
+                            List.generate(datapoint?.length ?? 0, (index) {
+                          return datapoint![index]
+                                  ?.amdpDatapointDescription
+                                  .toString() ??
+                              ''; // Return acrdpId as String or an empty string if datapoint[index] is null
+                        });
+        
+                        acrdpValues =
+                            List.generate(datapoint?.length ?? 0, (index) {
+                          return datapoint![index]?.acrdpId.toString() ??
+                              ''; // Return acrdpId as String or an empty string if datapoint[index] is null
+                        });
+        
+                        datalowerRangeValue =
+                            List.generate(datapoint?.length ?? 0, (index) {
+                          return datapoint![index]?.amtsLowerRangeValue ??
+                              ''; // Return acrdpId as String or an empty string if datapoint[index] is null
+                        });
+                        datahigherRangeValue =
+                            List.generate(datapoint?.length ?? 0, (index) {
+                          return datapoint![index]?.amtsUpperRangeValue ??
+                              ''; // Return acrdpId as String or an empty string if datapoint[index] is null
+                        });
+        
+                        dataamtsValue =
+                            List.generate(datapoint?.length ?? 0, (index) {
+                          return datapoint![index]?.amtsValue ??
+                              ''; // Return acrdpId as String or an empty string if datapoint[index] is null
+                        });
+        
+                        datapointControllers = List.generate(
+                          datapoint?.length ?? 0,
+                          (index) {
+                            if (index < datapoint!.length) {
+                              final initialValue =
+                                  datapoint[index].datapointValue.toString();
+                              return TextEditingController(
+                                  text: initialValue);
+                            } else {
+                              // Handle the case where dataPointValues is shorter than datapoint
+                              return TextEditingController();
+                            }
+                          },
+                        );
+        
+                        // Update the TextEditingController objects with locally stored values
+                        if (userEnteredDataPoints.containsKey(index)) {
+                          final List<String> storedValues =
+                              userEnteredDataPoints[index]!;
+                          for (int i = 0; i < storedValues.length; i++) {
+                            if (i < datapointControllers.length) {
+                              // Update existing TextEditingController
+                              datapointControllers[i].text = storedValues[i];
+                            } else {
+                              // Create and add a new TextEditingController for missing values
+                              datapointControllers.add(TextEditingController(
+                                  text: storedValues[i]));
                             }
                           }
-
-                          return Column(
-                            children: [
-                              if (datapoint?.length != 0)
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text("Data Point:"),
-                                    Card(
-                                      elevation: 5,
-                                      shadowColor: Colors.black,
-                                      child: SizedBox(
-                                        height: size ?250 : 350,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              children: [
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    SizedBox(
-                                                      width: size ?100: 180,
-                                                      child: Text(
-                                                        "Parameter",
-                                                        style: TextStyle(
-                                                          fontSize: size ?14: 17,
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width:  size ?75 :150,
-                                                      child: Text(
-                                                        "Specification",
-                                                        style: TextStyle(
-                                                          fontSize: size ?14: 17,
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 60,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 100,
-                                                      child: Text(
-                                                        "Actual",
-                                                        style: TextStyle(
-                                                          fontSize: 17,
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                ListView.builder(
-                                                  physics:
-                                                      const NeverScrollableScrollPhysics(),
-                                                  shrinkWrap: true,
-                                                  itemCount:
-                                                      datapoint?.length ?? 0,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    final item =
-                                                        datapoint?[index];
-                                                    final lowerRangeValue = item
-                                                        ?.amtsLowerRangeValue;
-                                                    final upperRangeValue = item
-                                                        ?.amtsUpperRangeValue;
-
-                                                    final datapointcondition =
-                                                        (((lowerRangeValue !=
-                                                                        null &&
-                                                                    upperRangeValue !=
-                                                                        null) &&
-                                                                isValidInteger(
-                                                                    lowerRangeValue) &&
-                                                                isValidInteger(
-                                                                    upperRangeValue) &&
-                                                                (double.tryParse(
-                                                                            lowerRangeValue) ??
-                                                                        0) <=
-                                                                    (double.tryParse(datapointControllers[index].text) ??
-                                                                        0) &&
-                                                                (double.tryParse(
-                                                                            upperRangeValue) ??
-                                                                        0) >=
-                                                                    (double.tryParse(datapointControllers[index]
-                                                                            .text) ??
-                                                                        0)) ||
-                                                            (datapointControllers[
-                                                                        index]
-                                                                    .text ==
-                                                                item!.amtsValue) // Compare entered value with expected value
-                                                        );
-
-                                                    final setvaluerange =
-                                                        (lowerRangeValue ==
-                                                                    '0' ||
-                                                                lowerRangeValue
-                                                                        ?.isEmpty ==
-                                                                    true) &&
-                                                            (upperRangeValue ==
-                                                                    '0' ||
-                                                                upperRangeValue
-                                                                        ?.isEmpty ==
-                                                                    true) &&
-                                                            (item?.amtsValue ==
-                                                                    '0' ||
-                                                                item?.amtsValue
-                                                                        ?.isEmpty ==
-                                                                    true);
-
-                                                    return Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        const SizedBox(
-                                                          height:
-                                                              defaultPadding,
-                                                        ),
-                                                        SizedBox(
-                                                          height: 80,
-                                                          child: Row(
-                                                            children: [
-                                                              SizedBox(
-                                                                width: 200,
-                                                                child: Text(
-                                                                    "${item?.amdpDatapointDescription}  "),
-                                                              ),
-                                                              SizedBox(
-                                                                width: 10,
-                                                              ),
-                                                              if (item?.amtsLowerRangeValue
-                                                                      ?.isNotEmpty ??
-                                                                  false)
-                                                                SizedBox(
-                                                                  width: 110,
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Text(
-                                                                          "${item?.amtsLowerRangeValue}"),
-                                                                      const Text(
-                                                                          "-"),
-                                                                      Text(
-                                                                          "${item?.amtsUpperRangeValue}"),
-                                                                    ],
-                                                                  ),
-                                                                )
-                                                              else
-                                                                SizedBox(
-                                                                  width: 110,
-                                                                  child: Text(
-                                                                      item?.amtsValue ??
-                                                                          ""),
-                                                                ),
-                                                              SizedBox(
-                                                                width: 28,
-                                                              ),
-                                                              SizedBox(
-                                                                width: 150,
-                                                                height:
-                                                                    70, // Set the desired height here
-                                                                child: Column(
-                                                                  children: [
-                                                                    Expanded(
-                                                                      child:
-                                                                          TextFormField(
-                                                                        controller:
-                                                                            datapointControllers[index],
-                                                                        onChanged:
-                                                                            (newValue) {
-                                                                          setState(
-                                                                              () {
-                                                                            if (index >= 0 &&
-                                                                                index < dataPointValues.length) {
-                                                                              dataPointValues[index] = newValue;
-                                                                            }
-                                                                          });
-                                                                        },
-                                                                        decoration:
-                                                                            InputDecoration(
-                                                                          labelText:
-                                                                              'Enter value',
-                                                                          floatingLabelBehavior:
-                                                                              FloatingLabelBehavior.never,
-                                                                          contentPadding:
-                                                                              EdgeInsets.all(defaultPadding),
-                                                                          errorStyle:
-                                                                              TextStyle(
-                                                                            fontSize:
-                                                                                10.0, // Adjust the font size as needed
-                                                                            height:
-                                                                                0.10, // Adjust the height to control spacing
-                                                                          ),
-                                                                          enabledBorder:
-                                                                              OutlineInputBorder(
-                                                                            borderSide:
-                                                                                BorderSide(
-                                                                              color: setvaluerange
-                                                                                  ? Colors.grey // Skip validation if all values are 0 or empty
-                                                                                  : datapointControllers[index].text.isEmpty
-                                                                                      ? Colors.grey
-                                                                                      : datapointcondition
-                                                                                          ? Colors.grey
-                                                                                          : Colors.orange, // Border color when validation fails
-                                                                              width: 2.0, // Border width when focused
-                                                                            ),
-                                                                          ),
-                                                                          border:
-                                                                              OutlineInputBorder(
-                                                                            borderSide:
-                                                                                BorderSide(
-                                                                              color: setvaluerange
-                                                                                  ? Colors.grey // Skip validation if all values are 0 or empty
-                                                                                  : datapointControllers[index].text.isEmpty
-                                                                                      ? Colors.grey
-                                                                                      : datapointcondition
-                                                                                          ? Colors.grey
-                                                                                          : Colors.orange, // Border color when validation fails
-                                                                              width: 2.0, // Border width when focused
-                                                                            ),
-                                                                          ),
-                                                                          focusedBorder:
-                                                                              OutlineInputBorder(
-                                                                            borderSide:
-                                                                                BorderSide(
-                                                                              color: setvaluerange
-                                                                                  ? Colors.grey // Skip validation if all values are 0 or empty
-                                                                                  : datapointControllers[index].text.isEmpty
-                                                                                      ? Colors.grey
-                                                                                      : datapointcondition
-                                                                                          ? Colors.grey
-                                                                                          : Colors.orange, // Border color when validation fails
-                                                                              width: 2.0, // Border width when focused
-                                                                            ),
-                                                                          ),
-                                                                          hintText: dataPointValues.isNotEmpty
-                                                                              ? 'Enter Value'
-                                                                              : '',
-                                                                          labelStyle:
-                                                                              TextStyle(
-                                                                            color: datapointControllers[index].text.isEmpty
-                                                                                ? Colors.grey
-                                                                                : ((lowerRangeValue != null && upperRangeValue != null) && isValidInteger(lowerRangeValue) && isValidInteger(upperRangeValue) && (double.tryParse(lowerRangeValue) ?? 0) <= (double.tryParse(datapointControllers[index].text) ?? 0) && (double.tryParse(upperRangeValue) ?? 0) >= (double.tryParse(datapointControllers[index].text) ?? 0)) || ((isValidInteger(item?.amtsValue ?? "")) && (isValidInteger(datapointControllers[index].text) ?? false) && (int.tryParse(item?.amtsValue ?? "") ?? 0) == (int.tryParse(datapointControllers[index].text) ?? 0))
-                                                                                    ? Colors.black
-                                                                                    : Colors.orange,
-                                                                          ),
-                                                                        ),
-                                                                        inputFormatters: [
-                                                                          FilteringTextInputFormatter.allow(
-                                                                              RegExp(r'^\d+\.?\d{0,4}')),
-                                                                        ],
-                                                                        validator:
-                                                                            (value) {
-                                                                          if (value == null ||
-                                                                              value.isEmpty) {
-                                                                            return 'Required Field';
-                                                                          }
-                                                                          return null;
-                                                                        },
-                                                                      ),
-                                                                    ),
-                                                                    (setvaluerange ||
-                                                                            datapointControllers[index]
-                                                                                .text
-                                                                                .isEmpty)
-                                                                        ? const Text(
-                                                                            "")
-                                                                        : (((lowerRangeValue != null && upperRangeValue != null) && isValidInteger(lowerRangeValue) && isValidInteger(upperRangeValue) && (double.tryParse(lowerRangeValue) ?? 0) <= (double.tryParse(datapointControllers[index].text) ?? 0) && (double.tryParse(upperRangeValue) ?? 0) >= (double.tryParse(datapointControllers[index].text) ?? 0)) ||
-                                                                                (datapointControllers[index].text == item!.amtsValue))
-                                                                            ? const Text('')
-                                                                            : const Text(
-                                                                                "Value out of Spec",
-                                                                                style: TextStyle(color: Colors.orange, fontSize: 12),
-                                                                              ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              (((lowerRangeValue == '0' || lowerRangeValue?.isEmpty == true) &&
-                                                                          (upperRangeValue == '0' ||
-                                                                              upperRangeValue?.isEmpty ==
-                                                                                  true) &&
-                                                                          (item?.amtsValue == '0' ||
-                                                                              item?.amtsValue?.isEmpty ==
-                                                                                  true)) ||
-                                                                      datapointControllers[
-                                                                              index]
-                                                                          .text
-                                                                          .isEmpty)
-                                                                  ? Text("")
-                                                                  : datapointcondition
-                                                                      ? Text('')
-                                                                      : Icon(
-                                                                          Icons
-                                                                              .warning,
-                                                                          color:
-                                                                              Colors.orange,
-                                                                        ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                )
-                              else
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text('Data Points        :'),
-                                    const SizedBox(
-                                      width: 8,
-                                    ),
-                                    Expanded(child: Text("No Data Points"))
-                                  ],
-                                ),
-                            ],
-                          );
-                        },
-                      ),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                        }
+        
+                        return Column(
                           children: [
-                            if (isConfirmButtonVisible)
-                              ElevatedButton(
-                                onPressed: () {
-                                  if (formKey.currentState!.validate()) {
-                                    isConfirmButtonVisible = false;
-
-                                    final Map<String, dynamic> data = {
-                                      'note': noteController.text,
-                                      'images':
-                                          capturedImages, // Store captured images
-                                    };
-
-                                    popupData[index] = data;
-
-                                    // Get edited values from the text controllers
-                                    List<String> editedValues =
-                                        datapointControllers
-                                            .map(
-                                                (controller) => controller.text)
-                                            .toList();
-
-                                    userEnteredDataPoints[index] = editedValues;
-
-                                    List<Map<String, String>> combinedValues =
-                                        [];
-                                    for (int i = 0;
-                                        i < acrdDescription.length;
-                                        i++) {
-                                      Map<String, String> valuePair = {
-                                        'acrpDescription': acrdDescription[i],
-                                        'acrdpId': acrdpValues[i],
-                                        'editedValue': i < editedValues.length
-                                            ? editedValues[i]
-                                            : "", // Use edited value if available, otherwise use an empty string
-                                      };
-                                      combinedValues.add(valuePair);
-                                    }
-                                    EnteredDataPoints[index] = combinedValues;
-                                    myStatefulWidgetDataMap[index] =
-                                        localDataEntries;
-                                    _showPopup(context, index);
-                                  }
-                                },
-                                child: const Text(
-                                  "Okay",
-                                  style: TextStyle(
-                                    fontSize: 13,
+                            if (datapoint?.length != 0)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("Data Point:"),
+        
+                          
+        
+                                  size ?
+        
+                     
+        
+                        Container(
+          padding: const EdgeInsets.all(4),
+        
+          
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// **Header Row (Parameter - Specification)**
+           
+        
+              /// **Scrollable List**
+              SizedBox(
+          height: 200,
+          child: SingleChildScrollView(
+          child: Column(
+            children: [
+              ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: datapoint?.length ?? 0,
+                separatorBuilder: (context, index) => const Divider(color: Colors.grey, thickness: 0.3),
+                itemBuilder: (context, index) {
+                  final item = datapoint?[index];
+                  final lowerRangeValue = item?.amtsLowerRangeValue;
+                  final upperRangeValue = item?.amtsUpperRangeValue;
+                  final isValueInRange = _isValueInRange(lowerRangeValue, upperRangeValue, datapointControllers[index].text);
+                  final isValueValid = _isValueValid(item, datapointControllers[index].text);
+        
+                  return _buildDataRow(
+                    item,
+                    datapointControllers[index],
+                    isValueInRange,
+                    isValueValid,
+                    dataPointValues,
+                    index,
+                    setState,
+                  );
+                },
+              ),
+            ],
+          ),
+          ),
+              ),
+            ],
+          ),
+        )
+        :
+        
+                                 Card(
+          elevation: 5,
+          shadowColor: Colors.black,
+          child: SizedBox(
+            height: size ? 350 : 350,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+          child: Column(
+          children: [
+          const SizedBox(height: 10),
+          _buildHeaderRow(size),
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: datapoint?.length ?? 0,
+            itemBuilder: (context, index) {
+              final item = datapoint?[index];
+              final lowerRangeValue = item?.amtsLowerRangeValue;
+              final upperRangeValue = item?.amtsUpperRangeValue;
+              final isValueInRange = _isValueInRange(lowerRangeValue, upperRangeValue, datapointControllers[index].text);
+              final isValueValid = _isValueValid(item, datapointControllers[index].text);
+        
+               return _buildDataRow(
+              item,
+              datapointControllers[index],
+              isValueInRange,
+              isValueValid,
+              dataPointValues,
+              index,
+              setState,
+            );
+            },
+          ),
+          ],
+          ),
+              ),
+            ),
+          ),
+        
+                                  )
+                                ],
+                              )
+                            else
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text('Data Points        :'),
+                                  const SizedBox(
+                                    width: 8,
                                   ),
-                                ),
+                                  Expanded(child: Text("No Data Points"))
+                                ],
                               ),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            if (!isConfirmButtonVisible)
-                              ElevatedButton(
-                                onPressed: () {
+                          ],
+                        );
+                      },
+                    ),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          if (isConfirmButtonVisible)
+                            ElevatedButton(
+                              onPressed: () {
+                                if (formKey.currentState!.validate()) {
+                                  isConfirmButtonVisible = false;
+        
+                                  final Map<String, dynamic> data = {
+                                    'note': noteController.text,
+                                    'images':
+                                        capturedImages, // Store captured images
+                                  };
+        
+                                  popupData[index] = data;
+        
+                                  // Get edited values from the text controllers
                                   List<String> editedValues =
                                       datapointControllers
-                                          .map((controller) => controller.text)
+                                          .map(
+                                              (controller) => controller.text)
                                           .toList();
-
-                                  if (acrdpValues.length != 0)
-                                    setState(() {
-                                      isConfirmButtonVisible = false;
-                                      bool allConditionsMet =
-                                          true; // Assume all conditions are met initially
-
-                                      for (int i = 0;
-                                          i < acrdpValues.length;
-                                          i++) {
-                                        if (((((datalowerRangeValue[i] == '0' ||
-                                                        datalowerRangeValue[i]
-                                                            .isEmpty) &&
-                                                    (datahigherRangeValue[i] ==
-                                                            "0" ||
-                                                        datahigherRangeValue[i]
-                                                            .isEmpty) &&
-                                                    (dataamtsValue[i] == "0" ||
-                                                        dataamtsValue[i]
-                                                            .isEmpty)) ||
-                                                isValidInteger(datalowerRangeValue[i]) &&
-                                                    isValidInteger(
-                                                        datahigherRangeValue[
-                                                            i]) &&
-                                                    ((double.tryParse(datalowerRangeValue[i]) ??
-                                                                0) <=
-                                                            (double.tryParse(datapointControllers[i].text) ??
-                                                                0) &&
-                                                        (double.tryParse(datahigherRangeValue[i]) ??
-                                                                0) >=
-                                                            (double.tryParse(editedValues[i]) ??
-                                                                0)))) ||
-                                            (isValidInteger(dataamtsValue[i]) &&
-                                                (dataamtsValue[i] ==
-                                                    datapointControllers[i].text))) {
-                                          allConditionsMet = true;
-                                          // Condition met
-
-                                          // Condition met
-                                        } else {
-                                          // Condition not met, set allConditionsMet to false and break the loop
-                                          allConditionsMet = false;
-                                          break;
-                                        }
-                                      }
-                                      // After the loop, update the selectedDropdownValues[index] based on allConditionsMet
-                                      allConditionsMet
-                                          ? selectedDropdownValues[index] = [
-                                              "Passed"
-                                            ]
-                                          : selectedDropdownValues[index] = [
-                                              "Failed"
-                                            ];
-
-                                      final Map<String, dynamic> data = {
-                                        'note': noteController.text,
-                                        'images':
-                                            capturedImages, // Store captured images
-                                      };
-
-                                      popupData[index] = data;
-
-                                      // Get edited values from the text controllers
-
-                                      userEnteredDataPoints[index] =
-                                          editedValues;
-
-                                      List<Map<String, String>> combinedValues =
-                                          [];
-                                      for (int i = 0;
-                                          i < acrdDescription.length;
-                                          i++) {
-                                        Map<String, String> valuePair = {
-                                          'acrpDescription': acrdDescription[i],
-                                          'acrdpId': acrdpValues[i],
-                                          'editedValue': i < editedValues.length
-                                              ? editedValues[i]
-                                              : "", // Use edited value if available, otherwise use an empty string
-                                        };
-                                        combinedValues.add(valuePair);
-                                      }
-                                      EnteredDataPoints[index] = combinedValues;
-                                      myStatefulWidgetDataMap[index] =
-                                          localDataEntries;
-
-                                      // _showPopup(context, index);
-                                      Navigator.of(context).pop();
-                                      Navigator.of(context).pop();
-                                      isConfirmButtonVisible = true;
-                                    });
-                                  else if (formKey.currentState!.validate()) {
+        
+                                  userEnteredDataPoints[index] = editedValues;
+        
+                                  List<Map<String, String>> combinedValues =
+                                      [];
+                                  for (int i = 0;
+                                      i < acrdDescription.length;
+                                      i++) {
+                                    Map<String, String> valuePair = {
+                                      'acrpDescription': acrdDescription[i],
+                                      'acrdpId': acrdpValues[i],
+                                      'editedValue': i < editedValues.length
+                                          ? editedValues[i]
+                                          : "", // Use edited value if available, otherwise use an empty string
+                                    };
+                                    combinedValues.add(valuePair);
+                                  }
+                                  EnteredDataPoints[index] = combinedValues;
+                                  myStatefulWidgetDataMap[index] =
+                                      localDataEntries;
+                                  _showPopup(context, index);
+                                }
+                              },
+                              child: const Text(
+                                "Okay",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          if (!isConfirmButtonVisible)
+                            ElevatedButton(
+                              onPressed: () {
+                                List<String> editedValues =
+                                    datapointControllers
+                                        .map((controller) => controller.text)
+                                        .toList();
+        
+                                if (acrdpValues.length != 0)
+                                  setState(() {
                                     isConfirmButtonVisible = false;
+                                    bool allConditionsMet =
+                                        true; // Assume all conditions are met initially
+        
+                                    for (int i = 0;
+                                        i < acrdpValues.length;
+                                        i++) {
+                                      if (((((datalowerRangeValue[i] == '0' ||
+                                                      datalowerRangeValue[i]
+                                                          .isEmpty) &&
+                                                  (datahigherRangeValue[i] ==
+                                                          "0" ||
+                                                      datahigherRangeValue[i]
+                                                          .isEmpty) &&
+                                                  (dataamtsValue[i] == "0" ||
+                                                      dataamtsValue[i]
+                                                          .isEmpty)) ||
+                                              isValidInteger(datalowerRangeValue[i]) &&
+                                                  isValidInteger(
+                                                      datahigherRangeValue[
+                                                          i]) &&
+                                                  ((double.tryParse(datalowerRangeValue[i]) ??
+                                                              0) <=
+                                                          (double.tryParse(datapointControllers[i].text) ??
+                                                              0) &&
+                                                      (double.tryParse(datahigherRangeValue[i]) ??
+                                                              0) >=
+                                                          (double.tryParse(editedValues[i]) ??
+                                                              0)))) ||
+                                          (isValidInteger(dataamtsValue[i]) &&
+                                              (dataamtsValue[i] ==
+                                                  datapointControllers[i].text))) {
+                                        allConditionsMet = true;
+                                        // Condition met
+        
+                                        // Condition met
+                                      } else {
+                                        // Condition not met, set allConditionsMet to false and break the loop
+                                        allConditionsMet = false;
+                                        break;
+                                      }
+                                    }
+                                    // After the loop, update the selectedDropdownValues[index] based on allConditionsMet
+                                    allConditionsMet
+                                        ? selectedDropdownValues[index] = [
+                                            "Passed"
+                                          ]
+                                        : selectedDropdownValues[index] = [
+                                            "Failed"
+                                          ];
+        
                                     final Map<String, dynamic> data = {
                                       'note': noteController.text,
                                       'images':
                                           capturedImages, // Store captured images
                                     };
-
+        
                                     popupData[index] = data;
-
+        
                                     // Get edited values from the text controllers
-
-                                    userEnteredDataPoints[index] = editedValues;
-
+        
+                                    userEnteredDataPoints[index] =
+                                        editedValues;
+        
                                     List<Map<String, String>> combinedValues =
                                         [];
                                     for (int i = 0;
@@ -1845,75 +1947,111 @@ size ? Column(
                                     EnteredDataPoints[index] = combinedValues;
                                     myStatefulWidgetDataMap[index] =
                                         localDataEntries;
-
+        
                                     // _showPopup(context, index);
                                     Navigator.of(context).pop();
                                     Navigator.of(context).pop();
                                     isConfirmButtonVisible = true;
-
-                                    // Navigator.of(context)
-                                    //     .pop();
-                                  }
-                                },
-                                child: Text("Confirm"),
-                              ),
-                            // Confirm button for the checkbox
-
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            if (isConfirmButtonVisible)
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    // popupData.clear();
-                                    // userEnteredDataPoints.clear();
-                                    // myStatefulWidgetDataMap.clear();
-
-                                    // if (selectedDropdownValues[index].first !=
-                                    //     "Passed")
-                                    if (!formKey.currentState!.validate()) {
-                                      selectedDropdownValues[index] = [
-                                        "Select Answer"
-                                      ];
-                                    }
                                   });
-
+                                else if (formKey.currentState!.validate()) {
+                                  isConfirmButtonVisible = false;
                                   final Map<String, dynamic> data = {
                                     'note': noteController.text,
-                                    // 'description':
-                                    //     descriptionController.text ?? "",
-                                    // 'dataPoints': dataPointValues,
                                     'images':
                                         capturedImages, // Store captured images
                                   };
-
+        
                                   popupData[index] = data;
-                                  final List<String> editedValues =
-                                      datapointControllers
-                                          .map((controller) => controller.text)
-                                          .toList();
-
+        
+                                  // Get edited values from the text controllers
+        
                                   userEnteredDataPoints[index] = editedValues;
-
+        
+                                  List<Map<String, String>> combinedValues =
+                                      [];
+                                  for (int i = 0;
+                                      i < acrdDescription.length;
+                                      i++) {
+                                    Map<String, String> valuePair = {
+                                      'acrpDescription': acrdDescription[i],
+                                      'acrdpId': acrdpValues[i],
+                                      'editedValue': i < editedValues.length
+                                          ? editedValues[i]
+                                          : "", // Use edited value if available, otherwise use an empty string
+                                    };
+                                    combinedValues.add(valuePair);
+                                  }
+                                  EnteredDataPoints[index] = combinedValues;
                                   myStatefulWidgetDataMap[index] =
                                       localDataEntries;
-
-                                  Navigator.of(context)
-                                      .pop(); // Close the dialog
-                                },
-                                child: const Text(
-                                  "Cancel",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                  ),
+        
+                                  // _showPopup(context, index);
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                  isConfirmButtonVisible = true;
+        
+                                  // Navigator.of(context)
+                                  //     .pop();
+                                }
+                              },
+                              child: Text("Confirm"),
+                            ),
+                          // Confirm button for the checkbox
+        
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          if (isConfirmButtonVisible)
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  // popupData.clear();
+                                  // userEnteredDataPoints.clear();
+                                  // myStatefulWidgetDataMap.clear();
+        
+                                  // if (selectedDropdownValues[index].first !=
+                                  //     "Passed")
+                                  if (!formKey.currentState!.validate()) {
+                                    selectedDropdownValues[index] = [
+                                      "Select Answer"
+                                    ];
+                                  }
+                                });
+        
+                                final Map<String, dynamic> data = {
+                                  'note': noteController.text,
+                                  // 'description':
+                                  //     descriptionController.text ?? "",
+                                  // 'dataPoints': dataPointValues,
+                                  'images':
+                                      capturedImages, // Store captured images
+                                };
+        
+                                popupData[index] = data;
+                                final List<String> editedValues =
+                                    datapointControllers
+                                        .map((controller) => controller.text)
+                                        .toList();
+        
+                                userEnteredDataPoints[index] = editedValues;
+        
+                                myStatefulWidgetDataMap[index] =
+                                    localDataEntries;
+        
+                                Navigator.of(context)
+                                    .pop(); // Close the dialog
+                              },
+                              child: const Text(
+                                "Cancel",
+                                style: TextStyle(
+                                  fontSize: 13,
                                 ),
                               ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
+                            ),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
@@ -2271,7 +2409,7 @@ size ? Column(
                                         maxLines: 2,
                                         style: TextStyle(
                                           fontSize: 18,
-                                          fontWeight: FontWeight.w400,
+                                          fontWeight: FontWeight.bold,
                                           color: Colors.black87,
                                         ),
                                       ),
@@ -2463,15 +2601,19 @@ size ? Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    CircleAvatar(
-                                                      backgroundColor:
-                                                          Colors.blue,
-                                                      child: Text(
-                                                        "${asset.seqNo}",
-                                                        style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                                    Container(
+                                                      width: 30,
+                                                      child: CircleAvatar(
+                                                        backgroundColor:
+                                                            Colors.blue,
+                                                        child: Text(
+                                                          "${asset.seqNo}",
+                                                          style:
+                                                              const TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -2483,20 +2625,28 @@ size ? Column(
                                                             CrossAxisAlignment
                                                                 .start,
                                                         children: [
-                                                          Text(
-                                                            decodedTamilText,
-                                                            maxLines: 4,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              color: Colors
-                                                                  .black87,
+                                                          InkWell(
+                                                            onTap: () {
+                                                              return showText(
+                                                                  context,
+                                                                  decodedTamilText);
+                                                            },
+                                                            child: Text(
+                                                              decodedTamilText,
+                                                              maxLines: 4,
+                                                              // textAlign: TextAlign.justify,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Colors
+                                                                    .black87,
+                                                              ),
                                                             ),
                                                           ),
                                                           const SizedBox(
@@ -2512,7 +2662,15 @@ size ? Column(
                                                         ],
                                                       ),
                                                     ),
-                                                    getStatusIcon(statusIcon),
+                                                    const SizedBox(width: 10),
+                                                    Container(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                      height: 100,
+                                                      width: 70,
+                                                      child: getStatusIcon(
+                                                          statusIcon),
+                                                    ),
                                                   ],
                                                 ),
                                                 const SizedBox(height: 10),
@@ -2899,43 +3057,8 @@ size ? Column(
                                                   ),
                                                 ]),
                                               ),
-
-                                              // if (widget.acrpinspectionstatus == 1)
-                                              //   Container(
-                                              //     height: 30,
-                                              //     width: 75,
-                                              //     decoration: BoxDecoration(
-                                              //         color: Colors.red,
-                                              //         borderRadius:
-                                              //             BorderRadius.circular(6))
-                                              //     padding: EdgeInsets.all(6),
-                                              //     child: Text(
-                                              //       "Overdue",
-                                              //       style: TextStyle(
-                                              //           fontSize: 16,
-                                              //           color: Colors.black),
-                                              //     ),
-                                              //   )
                                             ],
                                           ),
-
-                                          //                                widget.pageId == 1?
-
-                                          // Text(
-                                          //                                qrasset.first.assetname??"",
-                                          //                                 style: const TextStyle(
-                                          //                                   fontSize: 20,
-                                          //                                   fontWeight: FontWeight.bold,
-                                          //                                   color: Colors.white,
-                                          //                                 ),
-                                          //                               ):  Text(
-                                          //                               asset.first.assetname??"",
-                                          //                                 style: const TextStyle(
-                                          //                                   fontSize: 20,
-                                          //                                   fontWeight: FontWeight.bold,
-                                          //                                   color: Colors.white,
-                                          //                                 ),
-                                          //                               ),
 
                                           Container(
                                             child: Row(

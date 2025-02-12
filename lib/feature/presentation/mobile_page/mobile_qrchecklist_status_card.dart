@@ -1,0 +1,129 @@
+import 'package:flutter/material.dart';
+
+import '../pages/cheklist_details_page.dart';
+import '../widget/home_page_widget/work_schedule/assetlist_workschedule/checklist_qrcode_scanner.dart';
+
+
+class MobileQrcodeCheckListStatusCard extends StatelessWidget {
+  final Color statusColor;
+  final String checklistName;
+  final String statusText;
+  final String inspectionDate;
+  final int checklistStatus;
+  final int planId;
+  final String barcode;
+  final int assetId;
+  final String assetName;
+
+
+  const MobileQrcodeCheckListStatusCard({super.key, 
+    required this.statusColor,
+    required this.checklistName,
+    required this.statusText,
+    required this.inspectionDate,
+    required this.checklistStatus,
+    required this.planId,
+    required this.barcode,  
+     required this.assetId, 
+     required this.assetName,         
+  
+     
+  });
+
+ 
+  @override
+  Widget build(BuildContext context) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => checklistStatus == 3 || checklistStatus == 4
+                    ? CheckPointDetails(
+                        planId: planId,
+                        acrpinspectionstatus: checklistStatus,
+                        assetname: assetName,
+                      )
+                    : QRCodeScannerPage(barcode, planId, checklistStatus, assetId, assetName),
+              ),
+            );
+          },
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                /// Left Status Indicator
+                Container(
+                  width: 10,
+                  height: 90,
+                  decoration: BoxDecoration(
+                    color: statusColor,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      bottomLeft: Radius.circular(12),
+                    ),
+                  ),
+                ),
+                
+                /// Checklist Details
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// Checklist Name
+                        Text(
+                          checklistName,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+
+                        /// Status
+                        Text(
+                          "Status: $statusText",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: statusColor,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+
+                        /// Inspection Date
+                        Text(
+                          "Inspection Date: ${inspectionDate.substring(0, 10)}",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                /// Right Arrow Icon
+                Padding(
+                  padding: const EdgeInsets.only(right: 12.0),
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+  }
+}

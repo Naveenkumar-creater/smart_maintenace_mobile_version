@@ -15,19 +15,27 @@ class CheckListModel extends CheckListEntity{
           responseMsg: responseMsg,
         );
 
-  factory CheckListModel.fromJson(Map<String, dynamic> json) {
-    final responseDataJson = json['response_data'];
-    if (responseDataJson == null) {
-      throw Exception('Response data is null.');
-    }
+factory CheckListModel.fromJson(Map<String, dynamic> json) {
+  final responseDataJson = json['response_data'];
 
+  // Check for empty response_data and handle it
+  if (responseDataJson == null || responseDataJson.isEmpty) {
     return CheckListModel(
       responseCode: json['response_code'],
-      responseData: CheckListData.fromJson(responseDataJson),
+      responseData: CheckListData.empty(),  // Use a default empty instance
       wsReqId: json['ws_req_id'],
       responseMsg: json['response_msg'],
     );
   }
+
+  return CheckListModel(
+    responseCode: json['response_code'],
+    responseData: CheckListData.fromJson(responseDataJson),
+    wsReqId: json['ws_req_id'],
+    responseMsg: json['response_msg'],
+  );
+}
+
 }
 
 

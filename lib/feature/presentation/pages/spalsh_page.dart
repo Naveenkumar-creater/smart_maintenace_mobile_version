@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:suja_shoie_app/feature/presentation/pages/login_page.dart';
+import 'package:suja_shoie_app/feature/presentation/pages/responsive_login_page.dart';
 
 
 class SplashPage extends StatefulWidget {
@@ -25,7 +25,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
       Navigator.push(
         context,
         PageTransition(
-          child: const Loginpage(),
+          child: const ResponsiveLoginPage(),
           type: PageTransitionType.fade,
         ),
       );

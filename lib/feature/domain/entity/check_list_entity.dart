@@ -20,18 +20,17 @@ class CheckListEntity extends Equatable {
 class CheckListData {
   final List<CheckListDataEntity> checklist;
 
-  CheckListData({
-    required this.checklist,
-  });
+  CheckListData({required this.checklist});
+
+  factory CheckListData.empty() {
+    return CheckListData(checklist: []);  // Representing an empty list
+  }
 
   factory CheckListData.fromJson(Map<String, dynamic> json) {
     final checkListJson = json['check_list']; // Updated key name
-    // ignore: avoid_print
-    print('check list JSON: $checkListJson'); // Print the checkListJson
 
     if (checkListJson == null) {
-      throw Exception(
-          'Asset list is null.'); // Throw an exception if asset list is null
+      return CheckListData.empty();  // Return empty instance
     }
 
     final checkListData = (checkListJson as List)
@@ -43,6 +42,7 @@ class CheckListData {
     );
   }
 }
+
 
 
 class CheckListDataEntity {

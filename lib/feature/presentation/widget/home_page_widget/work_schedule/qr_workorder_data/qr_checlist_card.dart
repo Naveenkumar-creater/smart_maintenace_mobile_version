@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:suja_shoie_app/constant/utils/lottieLoadingAnimation.dart';
 
 import 'package:suja_shoie_app/feature/presentation/api_services/qrscanner_service.dart';
+import 'package:suja_shoie_app/feature/presentation/mobile_page/mobile_home_page.dart';
 import 'package:suja_shoie_app/feature/presentation/providers/qrscanner_provider.dart';
 import 'package:suja_shoie_app/feature/presentation/widget/home_page_widget/work_schedule/qr_workorder_data/qr_checklist_expand.dart';
 
@@ -63,8 +64,90 @@ class _CheckListCardViewState extends State<QrCheklistCard> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
    
-
-    return WillPopScope(
+final size= MediaQuery.of(context).size.width;
+    return size<600 ?
+    
+    WillPopScope(
+      onWillPop: () async {
+        // Navigate back to MainPage and replace the current page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MobileHomePage(),
+          ),
+        );
+        return true; // Prevent default back button behavior
+      },
+      child: Scaffold(
+        appBar: AppBar(
+           automaticallyImplyLeading: true,
+                       iconTheme: const IconThemeData(
+    color: Colors.white, 
+  ),
+          toolbarHeight: 70,
+          title: Consumer<QrScannerProvider>(
+            builder: (context, qrScannerProvider, _) {
+              final responseData = qrScannerProvider.user?.responseData;
+              final checklist = responseData?.checklist ?? [];
+              String firstChecklistItem = '';
+    
+              if (checklist.isNotEmpty) {
+                firstChecklistItem = checklist[0].assetname;
+              }
+    
+              return Container(
+                color: themeProvider.isDarkTheme
+                    ? const Color(0xFF212121)
+                    : const Color(0xFF25476A),
+  
+                child: Text(
+                firstChecklistItem  ,
+                  style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                  ),
+                ),
+              );
+            },
+          ),
+          // Other properties of the AppBar
+        ),
+        body: Consumer<QrScannerProvider>(
+          builder: (context, qrScannerProvider, _) {
+            final responseData = qrScannerProvider.user?.responseData;
+            final checklist = responseData?.checklist ?? [];
+    
+            return isLoading
+                ? Center(
+                    child: LottieLoadingAnimation(),
+                  )
+                : checklist.isEmpty
+                    ? const Center(
+                        child: Text("Unknown Asset", style: TextStyle(fontSize: 22.0)),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            QrChecklistWidget(
+                              checklist: checklist,
+                              title: 'CheckList',
+                            ),
+                          ],
+                        ),
+                      );
+          },
+        ),
+      ),
+    )
+    : 
+    
+    
+    
+    
+    WillPopScope(
       onWillPop: () async {
         // Navigate back to MainPage and replace the current page
         Navigator.pushReplacement(
@@ -79,7 +162,11 @@ class _CheckListCardViewState extends State<QrCheklistCard> {
 
 
 
-      child:Scaffold(
+      child:
+      
+      
+      
+      Scaffold(
         appBar: AppBar(
            automaticallyImplyLeading: true,
                        iconTheme: const IconThemeData(

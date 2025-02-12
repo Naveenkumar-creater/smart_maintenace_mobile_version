@@ -18,15 +18,28 @@ class QrChecklistWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AssetStatusColor assetStatusColor = AssetStatusColor();
+        final size= MediaQuery.of(context).size.width<600;
 
     return Expanded(
       child: Column(
         children: [
+size ?   Padding(
+       padding: const EdgeInsets.only(left:25,top: 15,bottom:15),
+       child: Container(
+         alignment: Alignment.centerLeft,
+         
+         child:  Text(
+                    title,
+                style:  TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+         ),
+     ):
+
           Padding(
             padding: const EdgeInsets.only(left: defaultPadding / 2,bottom: 30),
             child: Text(
               title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
           ),
           Expanded(
@@ -37,7 +50,10 @@ class QrChecklistWidget extends StatelessWidget {
                 final statusText = assetStatusColor.getStatusText(asset.checkliststatus, asset.inspectiondate);
                 final statusColor = assetStatusColor.getStatusColor(asset.checkliststatus, asset.inspectiondate);
 
-                return QrChecklistCard(
+                return 
+                
+                
+                 QrChecklistCard(
                   statusColor: statusColor,
                   checklistName: asset.checklistname,
                   statusText: statusText,

@@ -136,16 +136,16 @@ void _deleteImage(int index) {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Row(
-        children: <Widget>[
+        children: [
           IconButton(
             onPressed: captureAndResizeImage,
             icon: const Icon(Icons.image, size: 50, color: Colors.blue),
           ),
-          const SizedBox(width: defaultPadding,),
+     
            Expanded(
             child: Container(
-              padding: const EdgeInsets.only(top: 16),
-              height: 100,
+           padding: EdgeInsets.only(top: 16),
+              height: 75,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: widget.capturedImages.length,

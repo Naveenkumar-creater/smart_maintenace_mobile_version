@@ -65,7 +65,7 @@ final orgId=Provider.of<OrgIdProvider>(context,listen: false).orgid;
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final size= MediaQuery.of(context).size.width< 600;
-    return size?
+    return size ?
     
     
     WillPopScope(

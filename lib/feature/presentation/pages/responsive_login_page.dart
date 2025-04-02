@@ -12,7 +12,8 @@ class ResponsiveLoginPage extends StatelessWidget {
     return const Responsive(
       
       mobile: MobileLoginPage(),
-       tablet: Loginpage(), 
-       desktop: Text(""));
+      tablet: Loginpage(), 
+      desktop: Loginpage()
+    );
   }
 }

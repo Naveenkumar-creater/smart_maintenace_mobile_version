@@ -460,6 +460,8 @@ class _CheckPointDetailsState extends State<CheckPointDetails> {
     }
   }
 
+
+
   void _handleDropdownChange(int index, String newValue) async {
     await _fetchDataPoints(index);
     var fetchdata = Provider.of<DataPointProvider>(context, listen: false)
@@ -1047,6 +1049,13 @@ bool _isValueValid(dynamic item, String enteredValue) {
   return enteredValue == item?.amtsValue;
 }
 
+
+
+
+
+
+
+
 Widget _buildDataRow(
   dynamic item,
   TextEditingController controller,
@@ -1589,8 +1598,10 @@ Widget _buildDataRow(
                                         TextStyle(color: Colors.black),
                                   ),
                                   validator: (value) {
-                                    if (selectedDropdownValues[index].first !=
-                                        "Passed") {
+                                    if ((selectedDropdownValues[index].first !=
+                                        "Passed"))
+                                    
+                                     {
                                       if (value == null || value.isEmpty) {
                                         return 'Enter the Notes';
                                       }
@@ -1685,12 +1696,8 @@ Widget _buildDataRow(
                                 children: [
                                   const Text("Data Point:"),
         
-                          
-        
                                   size ?
-        
-                     
-        
+
                         Container(
           padding: const EdgeInsets.all(4),
         
@@ -1699,8 +1706,6 @@ Widget _buildDataRow(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               /// **Header Row (Parameter - Specification)**
-           
-        
               /// **Scrollable List**
               SizedBox(
           height: 200,
@@ -1737,6 +1742,8 @@ Widget _buildDataRow(
             ],
           ),
         )
+
+
         :
         
                                  Card(
@@ -1778,10 +1785,12 @@ Widget _buildDataRow(
               ),
             ),
           ),
-        
                                   )
                                 ],
                               )
+
+
+                              
                             else
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1807,6 +1816,7 @@ Widget _buildDataRow(
                             ElevatedButton(
                               onPressed: () {
                                 if (formKey.currentState!.validate()) {
+
                                   isConfirmButtonVisible = false;
         
                                   final Map<String, dynamic> data = {
@@ -1867,6 +1877,7 @@ Widget _buildDataRow(
                                 if (acrdpValues.length != 0)
                                   setState(() {
                                     isConfirmButtonVisible = false;
+
                                     bool allConditionsMet =
                                         true; // Assume all conditions are met initially
         
@@ -1886,7 +1897,8 @@ Widget _buildDataRow(
                                               isValidInteger(datalowerRangeValue[i]) &&
                                                   isValidInteger(
                                                       datahigherRangeValue[
-                                                          i]) &&
+                                                          i]) 
+                                                          &&
                                                   ((double.tryParse(datalowerRangeValue[i]) ??
                                                               0) <=
                                                           (double.tryParse(datapointControllers[i].text) ??
@@ -1898,7 +1910,11 @@ Widget _buildDataRow(
                                           (isValidInteger(dataamtsValue[i]) &&
                                               (dataamtsValue[i] ==
                                                   datapointControllers[i].text))) {
+                                        
                                         allConditionsMet = true;
+
+
+
                                         // Condition met
         
                                         // Condition met
@@ -1936,6 +1952,7 @@ Widget _buildDataRow(
                                         i < acrdDescription.length;
                                         i++) {
                                       Map<String, String> valuePair = {
+
                                         'acrpDescription': acrdDescription[i],
                                         'acrdpId': acrdpValues[i],
                                         'editedValue': i < editedValues.length
@@ -1953,8 +1970,10 @@ Widget _buildDataRow(
                                     Navigator.of(context).pop();
                                     isConfirmButtonVisible = true;
                                   });
+
                                 else if (formKey.currentState!.validate()) {
                                   isConfirmButtonVisible = false;
+
                                   final Map<String, dynamic> data = {
                                     'note': noteController.text,
                                     'images':
@@ -2060,6 +2079,7 @@ Widget _buildDataRow(
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

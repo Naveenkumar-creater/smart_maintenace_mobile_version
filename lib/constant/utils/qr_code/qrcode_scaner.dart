@@ -92,6 +92,7 @@ class _QrScannerState extends State<QrScanner> {
                 children: [
                   SizedBox(height: defaultPadding * 2),
                   Headings(
+             
                     subHeading: 'Functionality comes here',
                   ),
                 ],

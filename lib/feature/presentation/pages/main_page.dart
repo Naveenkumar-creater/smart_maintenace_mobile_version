@@ -32,8 +32,11 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
    LocationService location=LocationService();
+
+
   @override
   Widget build(BuildContext context) {
+    
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     final tabProvider = Provider.of<TabProvider>(context);
